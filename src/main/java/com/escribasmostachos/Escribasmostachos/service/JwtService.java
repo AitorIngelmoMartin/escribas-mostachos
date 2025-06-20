@@ -6,6 +6,8 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.escribasmostachos.Escribasmostachos.model.User;
+
 import java.security.Key;
 import java.util.Date;
 
@@ -17,9 +19,10 @@ public class JwtService {
 
     private final Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
 
-    public String generateToken(String email) {
+    public String generateToken(User user) {
         return Jwts.builder()
-            .setSubject(email)
+            .setSubject(user.getEmail())
+            .claim("username", user.getUsername())
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1h
             .signWith(key, SignatureAlgorithm.HS256)
