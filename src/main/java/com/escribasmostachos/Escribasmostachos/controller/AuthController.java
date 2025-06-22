@@ -45,21 +45,6 @@ public class AuthController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<ApiResponseDto> authenticateUser(@RequestBody LoginRequestDto loginRequest) {
-        log.info("Starting login operation");
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),    
-                        loginRequest.getPassword()
-                )
-        );
-        User user = (User) authentication.getPrincipal();
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(new ApiResponseDto(HttpStatus.OK, jwtService.generateToken(user)));
-    }
-
     @PostMapping("/register")
     public ResponseEntity<ApiResponseDto> registerUser(@RequestBody RegisterRequestDto registerRequest) {
         log.info("Starting register operation");
@@ -74,5 +59,20 @@ public class AuthController {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(new ApiResponseDto(HttpStatus.OK, "user registered"));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponseDto> authenticateUser(@RequestBody LoginRequestDto loginRequest) {
+        log.info("Starting login operation");
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getEmail(),    
+                        loginRequest.getPassword()
+                )
+        );
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(new ApiResponseDto(HttpStatus.OK, jwtService.generateToken(user)));
     }
 }
