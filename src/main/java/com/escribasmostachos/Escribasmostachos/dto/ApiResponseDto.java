@@ -1,16 +1,22 @@
 package com.escribasmostachos.Escribasmostachos.dto;
 
 import org.springframework.http.HttpStatus;
-
 import lombok.Data;
 
 @Data
-public class ApiResponseDto {
+public class ApiResponseDto<T> {
     private int status;
     private String message;
+    private T data;
 
     public ApiResponseDto(HttpStatus status, String message) {
         this.status = status.value();
         this.message = message;
+    }
+
+    public ApiResponseDto(HttpStatus status, String message, T data) {
+        this.status = status.value();
+        this.message = message;
+        this.data = data;
     }
 }

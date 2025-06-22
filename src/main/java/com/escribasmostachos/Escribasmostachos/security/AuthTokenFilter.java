@@ -103,7 +103,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private static void writeErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
         response.setStatus(status.value());
         response.setContentType("application/json");
-        ApiResponseDto dto = new ApiResponseDto(status, message);
+        ApiResponseDto<Void> dto = new ApiResponseDto<>(status, message);
         new ObjectMapper().writeValue(response.getWriter(), dto);
     }
 }

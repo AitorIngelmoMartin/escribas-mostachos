@@ -24,20 +24,20 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponseDto> registerUser(@RequestBody RegisterRequestDto registerRequest) {
+    public ResponseEntity<ApiResponseDto<Void>> registerUser(@RequestBody RegisterRequestDto registerRequest) {
         authService.register(registerRequest);
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(new ApiResponseDto(HttpStatus.OK, "user registered"));
+            .body(new ApiResponseDto<Void>(HttpStatus.OK, "user registered"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponseDto> authenticateUser(@RequestBody LoginRequestDto loginRequest) {
+    public ResponseEntity<ApiResponseDto<String>> authenticateUser(@RequestBody LoginRequestDto loginRequest) {
         String token = authService.login(loginRequest);
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(new ApiResponseDto(HttpStatus.OK, token));
+            .body(new ApiResponseDto<String>(HttpStatus.OK, "user logged", token));
     }
 }
