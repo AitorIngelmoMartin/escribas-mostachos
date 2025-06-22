@@ -47,12 +47,15 @@ public class AuthService {
             throw new DataIntegrityViolationException("Email " + registerRequest.getEmail() + " already used");
         }
 
-        log.info("User received: " + registerRequest);
+        log.info("User email received: " + registerRequest.getEmail());
         User newUser = User.fromDto(registerRequest, passwordEncoder.encode(registerRequest.getPassword()));
         userRepository.save(newUser);
     }
 
     public String login(LoginRequestDto loginRequest) {
+        log.info("Starting login operation");
+
+        log.info("User email received: " + loginRequest.getEmail());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),    
