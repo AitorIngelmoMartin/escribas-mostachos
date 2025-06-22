@@ -1,40 +1,44 @@
 package com.escribasmostachos.Escribasmostachos.controller;
 
-import java.util.Optional;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.escribasmostachos.Escribasmostachos.dto.AuthResponse;
 import com.escribasmostachos.Escribasmostachos.dto.LoginRequest;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.JwtService;
-import com.escribasmostachos.Escribasmostachos.service.UserService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserService userService;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     private final JwtService jwtService;
 
-    public AuthController(UserService userService, JwtService jwtService) {
-        this.userService = userService;
+    public AuthController(JwtService jwtService) {
         this.jwtService = jwtService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        Optional<User> userOpt = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
-        if (userOpt.isPresent()) {
-            String userJwt = jwtService.generateToken(userOpt.get());
-            return ResponseEntity.ok(new AuthResponse(userJwt));
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public String authenticateUser(@RequestBody LoginRequest loginRequest) {
+        log.info("Starting login operation");
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getEmail(),    
+                        loginRequest.getPassword()
+                )
+        );
+        User user = (User) authentication.getPrincipal();
+        return jwtService.generateToken(user);
     }
 }
