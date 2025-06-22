@@ -35,10 +35,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
     
-    if (request.getRequestURI().startsWith("/auth")) {
-        filterChain.doFilter(request, response);
-        return;
-    }
+        if (request.getRequestURI().startsWith("/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         try {
             String token = parseJwt(request);
             if (token != null && jwtService.validateJwtToken(token)) {
