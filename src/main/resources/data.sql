@@ -1,8 +1,1 @@
--- CREATE TABLE users ( 
---    id INT NOT NULL, 
---    email VARCHAR(50) NOT NULL, 
---    username VARCHAR(20), 
---    password VARCHAR(20)
--- );
-
-INSERT INTO users (id, email) VALUES (1, 'aitor@gmail.com');
+INSERT INTO users (id, email, username, password) VALUES (1, 'a@b.com', 'username', '$2a$10$RjeE47YLF6vsbUDrJuL6.eRRTK5f7oS83824BflfBeJyXU6Jf39.y');
