@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDto;
+import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.JwtService;
 import com.escribasmostachos.Escribasmostachos.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,6 +27,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @Slf4j
 @Component
@@ -52,16 +54,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Invalid or missing token");
                 return;
             }
-
-            jwtService.validateJwtToken(token);
+            jwtService.jwtTokenIsToken(token);
             String email = jwtService.getEmailFromToken(token);
-            UserDetails userDetails = userService.loadUserByUsername(email);
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
+            User user = new User();
+            user.setEmail(email);
+            user.setUsername(email);
+            user.setPassword("");
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (MalformedJwtException e) {
