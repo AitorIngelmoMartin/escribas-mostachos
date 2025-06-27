@@ -40,7 +40,7 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, String email) {
-        return getEmailFromToken(token).equals(email) && validateJwtToken(token);
+        return getEmailFromToken(token).equals(email) && jwtTokenIsToken(token);
     }
 
     public String getEmailFromToken(String token) {
@@ -53,11 +53,11 @@ public class JwtService {
 
     /**
      * Validates the given JWT token.
-     * <p>
+     * 
      * This method parses and validates the JWT token's signature, format, expiration,
      * and supported claims. If the token is invalid, malformed, expired, unsupported,
      * or contains empty claims, it will throw a corresponding exception.
-     * <p>
+     * 
      * The exceptions thrown by this method are caught by {@link AuthTokenFilter}
      * to return appropriate HTTP 401 Unauthorized responses with specific error messages.
      *
@@ -68,7 +68,7 @@ public class JwtService {
      * @throws IllegalArgumentException if the token claims string is empty
      * @throws io.jsonwebtoken.JwtException for other JWT-related validation errors
      */
-    public boolean validateJwtToken(String token) {
+    public boolean jwtTokenIsToken(String token) {
         Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
         return true;
     }
