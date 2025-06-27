@@ -39,10 +39,6 @@ public class JwtService {
             .compact();
     }
 
-    public boolean isTokenValid(String token, String email) {
-        return getEmailFromToken(token).equals(email) && jwtTokenIsToken(token);
-    }
-
     public String getEmailFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key).build()
