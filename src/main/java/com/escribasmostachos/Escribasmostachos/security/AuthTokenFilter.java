@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.*;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -17,7 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDto;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.JwtService;
-import com.escribasmostachos.Escribasmostachos.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -35,9 +33,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtService jwtService;
-
-    @Autowired
-    private UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
