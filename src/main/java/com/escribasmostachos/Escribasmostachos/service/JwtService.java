@@ -33,13 +33,14 @@ public class JwtService {
         return Jwts.builder()
             .setSubject(user.getUsername())
             .claim("email", user.getEmail())
+            .claim("id", user.getId())
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1h
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
     }
 
-    private Claims getAllClaimsFromToken(String token) {
+    public Claims getAllClaimsFromToken(String token) {
         return Jwts.parserBuilder()
             .setSigningKey(key)
             .build()
@@ -47,12 +48,12 @@ public class JwtService {
             .getBody();
     }
 
-    public String getUsernameFromToken(String token) {
-        return getAllClaimsFromToken(token).getSubject();
+    public String getUsernameFromTokenClaims(Claims tokenClaims) {
+        return tokenClaims.getSubject();
     }
 
-    public String getEmailFromToken(String token) {
-        return getAllClaimsFromToken(token).get("email", String.class);
+    public String getEmailFromTokenClaims(Claims tokenClaims) {
+        return tokenClaims.get("email", String.class);
     }
 
     /**
