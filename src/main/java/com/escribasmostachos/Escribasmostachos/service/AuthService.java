@@ -1,12 +1,12 @@
 package com.escribasmostachos.Escribasmostachos.service;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.escribasmostachos.Escribasmostachos.dto.LoginRequestDto;
 import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDto;
 import com.escribasmostachos.Escribasmostachos.exception.UserAlreadyExistsException;
@@ -43,8 +43,19 @@ public class AuthService {
     public void register(RegisterRequestDto registerRequest) {
         log.info("Starting register operation");
 
-        if(userRepository.existsByEmail(registerRequest.getEmail())){
-            throw new UserAlreadyExistsException("Email " + registerRequest.getEmail() + " already used");
+        Optional<User> existingUser = userRepository.findByEmailOrUsername(registerRequest.getEmail(), registerRequest.getUsername());
+
+        if (existingUser.isPresent()) {
+            String existingEmail = existingUser.get().getEmail();
+            String existingUsername = existingUser.get().getUsername();
+
+            if (existingEmail.equals(registerRequest.getEmail())) {
+                throw new UserAlreadyExistsException("Email already in use");
+            }
+
+            if (existingUsername.equals(registerRequest.getUsername())) {
+                throw new UserAlreadyExistsException("Username already taken");
+            }
         }
 
         log.info("User email received: " + registerRequest.getEmail());
