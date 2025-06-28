@@ -1,9 +1,12 @@
 package com.escribasmostachos.Escribasmostachos.exception;
 
+import java.util.stream.Collectors;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -13,7 +16,19 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
-public class ApiExceptionHandler {
+public class ApiExceptionsHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleInvalidRequestValidationException(MethodArgumentNotValidException ex) {
+        String errors = ex.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+            .collect(Collectors.joining("; "));
+        log.error("API request have some errors: " + errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, errors));
+    }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ApiResponseDto<Void>> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
@@ -29,17 +44,17 @@ public class ApiExceptionHandler {
                 .body(new ApiResponseDto<Void>(HttpStatus.CONFLICT, "Data integrity error"));
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponseDto<Void>> handleGenericException(Exception ex) {
-        log.error("Internal server error" + ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResponseDto<Void>(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"));
-    }
-
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ApiResponseDto<Void>> handleUsernameNotFound(UsernameNotFoundException ex) {
         log.warn("Username not found: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiResponseDto<Void>(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleGenericException(Exception ex) {
+        log.error("Internal server error" + ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponseDto<Void>(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"));
     }
 }
