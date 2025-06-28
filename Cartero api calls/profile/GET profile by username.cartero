@@ -1,0 +1,11 @@
+version = 1
+url = "http://127.0.0.1:8080/profile/users/username_2"
+method = "GET"
+
+[headers]
+Content-Type = "application/json"
+Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGIuY29tIiwidXNlcm5hbWUiOiJ1c2VybmFtZV8xIiwiaWF0IjoxNzUxMTA4MDA5LCJleHAiOjE3NTExMTE2MDl9.wB1mQuWvqYi9QDJOXMaUKib19HBvQt7JuKu3aI4R__I"
+
+[variables]
+
+[inactive-params]
