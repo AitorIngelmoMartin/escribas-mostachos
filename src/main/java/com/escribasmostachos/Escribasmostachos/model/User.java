@@ -88,9 +88,6 @@ public class User implements UserDetails {
         }
 
         dto.setMembershipDate(this.membershipDate);
-        // dto.setRoles(this.roles);
-        dto.setLastActive(this.lastActive);
-
         return dto;
     }
 }

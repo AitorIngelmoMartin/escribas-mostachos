@@ -23,8 +23,4 @@ public class UserProfileDto {
     private BookDTO currentBook;
 
     private LocalDate membershipDate;
-
-    // private List<String> roles;
-
-    private LocalDateTime lastActive;
 }
