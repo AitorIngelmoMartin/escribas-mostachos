@@ -44,19 +44,23 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             return;
         }
         try {
-            String token = parseJwt(request);
+            String token = getJwtFromRequestHeaders(request);
             if (token == null){
                 writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Invalid or missing token");
                 return;
             }
-            jwtService.jwtTokenIsToken(token);
+
+            jwtService.validateJwt(token);
+
             String email = jwtService.getEmailFromToken(token);
             User user = new User();
             user.setEmail(email);
             user.setUsername(email);
             user.setPassword("");
+
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (MalformedJwtException e) {
             log.warn("Invalid JWT token: " + e.getMessage());
@@ -86,7 +90,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String parseJwt(HttpServletRequest request) {
+    private String getJwtFromRequestHeaders(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
         if (headerAuth != null && headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);

@@ -64,8 +64,7 @@ public class JwtService {
      * @throws IllegalArgumentException if the token claims string is empty
      * @throws io.jsonwebtoken.JwtException for other JWT-related validation errors
      */
-    public boolean jwtTokenIsToken(String token) {
+    public void validateJwt(String token) {
         Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-        return true;
     }
 }

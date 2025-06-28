@@ -1,6 +1,5 @@
 package com.escribasmostachos.Escribasmostachos.configuration;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +18,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.escribasmostachos.Escribasmostachos.security.AuthTokenFilter;
-import com.escribasmostachos.Escribasmostachos.security.JwtAuthenticationEntryPoint;
 
 import java.util.List;
 
@@ -28,9 +26,6 @@ public class SecurityConfig {
 
     @Value("${jwt.secret}")
     private String secretKey;
-
-    @Autowired
-    private JwtAuthenticationEntryPoint unauthorizedHandler;
     
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -54,9 +49,6 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .exceptionHandling(exceptionHandling ->
-                    exceptionHandling.authenticationEntryPoint(unauthorizedHandler)
-            )
             .sessionManagement(sessionManagement ->
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
@@ -72,7 +64,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200")); // URL de tu Angular
+        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
 
