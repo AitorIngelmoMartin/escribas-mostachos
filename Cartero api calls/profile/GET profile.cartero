@@ -3,8 +3,8 @@ url = "http://127.0.0.1:8080/profile"
 method = "GET"
 
 [headers]
-Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGIuY29tIiwidXNlcm5hbWUiOiJ1c2VybmFtZSIsImlhdCI6MTc1MDYxNDgxMCwiZXhwIjoxNzUwNjE4NDEwfQ.t2fADvaQ0QuLnZtvu_DARvyEW88NaTSBBxTiYc8PxWk"
 Content-Type = "application/json"
+Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwiaWF0IjoxNzUxMTA4MzE1LCJleHAiOjE3NTExMTE5MTV9.cHun_H5sFy8wmX58NfEdLPfIVh1IK2M3bWehhMeFUGs"
 
 [variables]
 
