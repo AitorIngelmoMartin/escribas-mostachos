@@ -29,22 +29,30 @@ public class JwtService {
     }
 
     public String generateToken(User user) {
-        log.debug("generating token for user: " + user.getEmail());
+        log.debug("generating token for user: " + user.getUsername());
         return Jwts.builder()
-            .setSubject(user.getEmail())
-            .claim("username", user.getUsername())
+            .setSubject(user.getUsername())
+            .claim("email", user.getEmail())
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1h
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
     }
 
-    public String getEmailFromToken(String token) {
+    private Claims getAllClaimsFromToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key).build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+    }
+
+    public String getUsernameFromToken(String token) {
+        return getAllClaimsFromToken(token).getSubject();
+    }
+
+    public String getEmailFromToken(String token) {
+        return getAllClaimsFromToken(token).get("email", String.class);
     }
 
     /**

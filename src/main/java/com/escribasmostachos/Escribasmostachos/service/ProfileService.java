@@ -17,7 +17,7 @@ public class ProfileService {
         this.userService = userService;
     }
 
-    public UserProfileDto getProfile(String email){
-        return userService.loadUserByUsername(email).toProfileDto();
+    public UserProfileDto getProfile(String username){
+        return userService.loadUserByUsername(username).toProfileDto();
     }
 }

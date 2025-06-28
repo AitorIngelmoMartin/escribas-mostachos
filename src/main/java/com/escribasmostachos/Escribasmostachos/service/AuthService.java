@@ -66,10 +66,10 @@ public class AuthService {
     public String login(LoginRequestDto loginRequest) {
         log.info("Starting login operation");
 
-        log.info("User email received: " + loginRequest.getEmail());
+        log.info("User email received: " + loginRequest.getUsername());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),    
+                        loginRequest.getUsername(),    
                         loginRequest.getPassword()
                 )
         );

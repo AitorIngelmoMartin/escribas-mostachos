@@ -52,10 +52,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
             jwtService.validateJwt(token);
 
-            String email = jwtService.getEmailFromToken(token);
+            String username = jwtService.getUsernameFromToken(token);
             User user = new User();
-            user.setEmail(email);
-            user.setUsername(email);
+            user.setUsername(username);
             user.setPassword("");
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());

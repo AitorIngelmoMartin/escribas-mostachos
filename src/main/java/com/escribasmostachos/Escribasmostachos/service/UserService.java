@@ -31,11 +31,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public User loadUserByUsername(String email) throws UsernameNotFoundException {
-        log.info("Finding user with email: " +  email);
-        Optional<User> userOpt = userRepository.findByEmail(email);
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("Finding user with username: " +  username);
+        Optional<User> userOpt = userRepository.findByUsername(username);
         if (!userOpt.isPresent())  {
-            throw new UsernameNotFoundException("User Not Found with email: " + email);
+            throw new UsernameNotFoundException("User not found");
         }
         return userOpt.get();
     }
