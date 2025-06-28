@@ -2,7 +2,6 @@ package com.escribasmostachos.Escribasmostachos.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +11,8 @@ import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDto;
 import com.escribasmostachos.Escribasmostachos.dto.LoginRequestDto;
 import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDto;
 import com.escribasmostachos.Escribasmostachos.service.AuthService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -24,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponseDto<Void>> registerUser(@RequestBody RegisterRequestDto registerRequest) {
+    public ResponseEntity<ApiResponseDto<Void>> registerUser(@Valid @RequestBody RegisterRequestDto registerRequest) {
         authService.register(registerRequest);
 
         return ResponseEntity
@@ -33,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponseDto<String>> authenticateUser(@RequestBody LoginRequestDto loginRequest) {
+    public ResponseEntity<ApiResponseDto<String>> authenticateUser(@Valid @RequestBody LoginRequestDto loginRequest) {
         String token = authService.login(loginRequest);
 
         return ResponseEntity
