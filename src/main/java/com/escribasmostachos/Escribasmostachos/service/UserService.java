@@ -2,8 +2,6 @@ package com.escribasmostachos.Escribasmostachos.service;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -17,8 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class UserService implements UserDetailsService {
-    
-    @Autowired
+
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {

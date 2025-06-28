@@ -1,7 +1,6 @@
 package com.escribasmostachos.Escribasmostachos.service;
 
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,16 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class AuthService {
-    
-    @Autowired
-    AuthenticationManager authenticationManager;
 
-    @Autowired
+    private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
+    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
     public AuthService(UserRepository userRepository,
