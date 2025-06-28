@@ -38,7 +38,7 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(unique = true, nullable = false)
+    @Column(length = 20, unique = true, nullable = false)
     private String username;
 
     private String password;
