@@ -1,7 +1,6 @@
 package com.escribasmostachos.Escribasmostachos.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.escribasmostachos.Escribasmostachos.dto.LoginRequestDto;
 import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDto;
+import com.escribasmostachos.Escribasmostachos.exception.UserAlreadyExistsException;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.repository.UserRepository;
 
@@ -44,7 +44,7 @@ public class AuthService {
         log.info("Starting register operation");
 
         if(userRepository.existsByEmail(registerRequest.getEmail())){
-            throw new DataIntegrityViolationException("Email " + registerRequest.getEmail() + " already used");
+            throw new UserAlreadyExistsException("Email " + registerRequest.getEmail() + " already used");
         }
 
         log.info("User email received: " + registerRequest.getEmail());
