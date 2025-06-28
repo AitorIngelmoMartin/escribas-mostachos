@@ -18,6 +18,7 @@ import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -52,10 +53,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
             jwtService.validateJwt(token);
 
-            String username = jwtService.getUsernameFromToken(token);
+            Claims tokenClaims = jwtService.getAllClaimsFromToken(token);
             User user = new User();
-            user.setUsername(username);
-            user.setPassword("");
+            user.setUsername(jwtService.getUsernameFromTokenClaims(tokenClaims));
+            user.setEmail(jwtService.getEmailFromTokenClaims(tokenClaims));
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
