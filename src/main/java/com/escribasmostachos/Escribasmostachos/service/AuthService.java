@@ -58,7 +58,7 @@ public class AuthService {
             }
         }
 
-        log.info("User email received: " + registerRequest.getEmail());
+        log.debug("User email received: " + registerRequest.getEmail());
         User newUser = User.fromDto(registerRequest, passwordEncoder.encode(registerRequest.getPassword()));
         userRepository.save(newUser);
     }
@@ -66,7 +66,7 @@ public class AuthService {
     public String login(LoginRequestDto loginRequest) {
         log.info("Starting login operation");
 
-        log.info("User email received: " + loginRequest.getUsername());
+        log.debug("User name received: " + loginRequest.getUsername());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),    
