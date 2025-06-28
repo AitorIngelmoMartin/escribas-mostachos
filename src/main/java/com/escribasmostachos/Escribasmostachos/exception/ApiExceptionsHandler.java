@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDto;
 
@@ -17,6 +18,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestControllerAdvice
 public class ApiExceptionsHandler {
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleInvalidRequestValidationException(HandlerMethodValidationException ex) {
+    String errorMessage = ex.getAllErrors()
+            .stream()
+            .map(error -> error.getDefaultMessage())
+            .findFirst()
+            .orElse("Validation error");
+        log.error("API request have some errors: " + errorMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, errorMessage));
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponseDto<Void>> handleInvalidRequestValidationException(MethodArgumentNotValidException ex) {
@@ -53,7 +66,7 @@ public class ApiExceptionsHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponseDto<Void>> handleGenericException(Exception ex) {
-        log.error("Internal server error" + ex.getMessage(), ex);
+        log.error("Internal server error: " + ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiResponseDto<Void>(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"));
     }
