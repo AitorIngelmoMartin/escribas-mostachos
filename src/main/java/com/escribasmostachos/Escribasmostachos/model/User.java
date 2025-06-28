@@ -1,7 +1,6 @@
 package com.escribasmostachos.Escribasmostachos.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -19,7 +18,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -44,18 +42,20 @@ public class User implements UserDetails {
     private String password;
 
     // Profile fields
+    @Column(length = 25, nullable = true)
     private String firstName;
-    private String lastName;
-    private String profilePictureUrl;
-    // private List<String> favoriteGenres;
-    private Integer booksReadCount;
 
-    @OneToOne
+    @Column(length = 25, nullable = true)
+    private String lastName;
+
+    private String profilePictureUrl;
+
+    private Integer booksReadCount = 0;
+
+    @OneToOne(optional = true)
     private Book currentBook;
 
     private LocalDate membershipDate;
-    // private List<String> roles;
-    private LocalDateTime lastActive;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -76,7 +76,6 @@ public class User implements UserDetails {
         dto.setFirstName(this.firstName);
         dto.setLastName(this.lastName);
         dto.setProfilePictureUrl(this.profilePictureUrl);
-        // dto.setFavoriteGenres(this.favoriteGenres);
         dto.setBooksReadCount(this.booksReadCount);
 
         if (this.currentBook != null) {
