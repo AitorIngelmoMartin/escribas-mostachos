@@ -24,7 +24,4 @@ public class BookDTO {
     
     @Pattern(regexp = "^(https?://.*)?$", message = "Cover URL must be a valid URL")
     private String coverUrl;
-
-    @Size(max = 20, message = "UpdatedBy must be a maximum of 20 characters")
-    private String updatedBy;
 }
