@@ -30,7 +30,7 @@ public class AuthController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(new ApiResponseDto<Void>(HttpStatus.OK, "user registered"));
+            .body(new ApiResponseDto<Void>(HttpStatus.OK, "user successfully registered"));
     }
 
     @PostMapping("/login")
@@ -39,6 +39,6 @@ public class AuthController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(new ApiResponseDto<String>(HttpStatus.OK, "user logged", token));
+            .body(new ApiResponseDto<String>(HttpStatus.OK, "user successfully logged", token));
     }
 }
