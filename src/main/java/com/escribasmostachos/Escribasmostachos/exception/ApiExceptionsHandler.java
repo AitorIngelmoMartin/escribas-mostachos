@@ -30,13 +30,6 @@ public class ApiExceptionsHandler {
                 .body(new ApiResponseDto<Void>(HttpStatus.CONFLICT, "A user already exists with that email"));
     }
 
-    @ExceptionHandler(InvalidIsbnException.class)
-    public ResponseEntity<ApiResponseDto<Void>> handleInvalidIsbnException(InvalidIsbnException ex) {
-        log.error("Invalid ISBN exception: " + ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
-    }
-
     @ExceptionHandler(BookAlreadyExistsException.class)
     public ResponseEntity<ApiResponseDto<Void>> handleBookAlreadyExistsException(BookAlreadyExistsException ex) {
         log.error("Book already exists: " + ex.getMessage());
