@@ -7,15 +7,15 @@ type = "raw"
 format = "json"
 body = '''
 {
-  "isbn": "9788441532106",
+  "isbn": "9788408305910",
   "title": "Clean Code",
   "author": "Robert C. Martin",
   "coverUrl": "https://example.com/covers/clean-code.jpg"
 }'''
 
 [headers]
+Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8zIiwiZW1haWwiOiJjQGQuY29tIiwidXNlcklkIjozLCJpYXQiOjE3NTEyMjAwMjYsImV4cCI6MTc1MTIyMzYyNn0.6He4QcG3udJa5qnMOFWvCwlnq-sGzFVp3L3uOQ9_3VE"
 Content-Type = "application/json"
-Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwiaWQiOjEsImlhdCI6MTc1MTIwNjk5NywiZXhwIjoxNzUxMjEwNTk3fQ.03qKR_XJjnali1LbUW85mrSGs_Z1jtgGL6LHhUIhnsE"
 
 [variables]
 
