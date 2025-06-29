@@ -43,13 +43,6 @@ public class ApiExceptionsHandler {
                 .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
 
-    @ExceptionHandler(IncoherentOperationException.class)
-    public ResponseEntity<ApiResponseDto<Void>> handleIncoherentOperationException(IncoherentOperationException ex) {
-        log.error("Incoherent operation: " + ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, "Incoherent operation: " + ex.getMessage()));
-    }
-
     // API requests exceptions
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponseDto<Void>> handleBadCredentialsException(BadCredentialsException ex) {
