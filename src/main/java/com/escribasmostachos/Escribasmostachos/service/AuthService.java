@@ -1,11 +1,14 @@
 package com.escribasmostachos.Escribasmostachos.service;
 
 import java.util.Optional;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
+
 import com.escribasmostachos.Escribasmostachos.dto.LoginRequestDto;
 import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDto;
 import com.escribasmostachos.Escribasmostachos.exception.UserAlreadyExistsException;
@@ -13,6 +16,8 @@ import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDate;
 
 @Slf4j
 @Service
@@ -53,6 +58,7 @@ public class AuthService {
 
         log.debug("User email received: " + registerRequest.getEmail());
         User newUser = User.fromDto(registerRequest, passwordEncoder.encode(registerRequest.getPassword()));
+        newUser.setMembershipDate(LocalDate.now());
         userRepository.save(newUser);
     }
 
