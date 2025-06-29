@@ -4,10 +4,10 @@ INSERT INTO users (email, username, password, first_name, last_name, books_read_
 
 -- Books table
 INSERT INTO books (isbn, title, author, cover_url, updated_by) VALUES
-('9780000000001', 'El Quijote', 'Miguel de Cervantes', 'https://example.com/quijote.jpg', 'admin'),
-('9780000000002', 'Cien Años de Soledad', 'Gabriel García Márquez', 'https://example.com/soledad.jpg', 'admin'),
-('9780000000003', 'La Sombra del Viento', 'Carlos Ruiz Zafón', 'https://example.com/sombra.jpg', 'editor'),
-('9780000000004', 'Rayuela', 'Julio Cortázar', 'https://example.com/rayuela.jpg', 'user1'),
+('9788408304753', 'El Quijote', 'Miguel de Cervantes', 'https://example.com/quijote.jpg', 'admin'),
+('9788410163768', 'Cien Años de Soledad', 'Gabriel García Márquez', 'https://example.com/soledad.jpg', 'admin'),
+('9788441532106', 'La Sombra del Viento', 'Carlos Ruiz Zafón', 'https://example.com/sombra.jpg', 'editor'),
+('9798884444447', 'Rayuela', 'Julio Cortázar', 'https://example.com/rayuela.jpg', 'user1'),
 ('9780000000005', 'Pedro Páramo', 'Juan Rulfo', 'https://example.com/pedro.jpg', 'user2'),
 ('9780000000006', 'Don Juan Tenorio', 'José Zorrilla', 'https://example.com/donjuan.jpg', 'editor'),
 ('9780000000007', 'Ficciones', 'Jorge Luis Borges', 'https://example.com/ficciones.jpg', 'admin'),
