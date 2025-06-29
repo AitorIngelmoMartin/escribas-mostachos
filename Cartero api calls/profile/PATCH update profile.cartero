@@ -2,9 +2,19 @@ version = 1
 url = "http://127.0.0.1:8080/profile"
 method = "PATCH"
 
+[body]
+type = "raw"
+format = "json"
+body = '''
+{
+  "firstName": "Alice",
+  "lastName": "Smith",
+  "profilePictureUrl": "https://example.com/profiles/alice.jpg"
+}'''
+
 [headers]
+Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwiaWQiOjEsImlhdCI6MTc1MTEyNTg2MywiZXhwIjoxNzUxMTI5NDYzfQ.eriWVP9Z8TFIyYu2bTmuLQmvsFZD6WnjFlZ5GCqIY4Q"
 Content-Type = "application/json"
-Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwiaWF0IjoxNzUxMTIxNjY5LCJleHAiOjE3NTExMjUyNjl9.qk_-gv_-QCvg6Qn9lGR78EUwM3vLk6Fc2Pi9GKdbzHg"
 
 [variables]
 
