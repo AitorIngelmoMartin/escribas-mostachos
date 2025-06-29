@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.escribasmostachos.Escribasmostachos.dto.LoginRequestDto;
 import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDto;
-import com.escribasmostachos.Escribasmostachos.exception.UserAlreadyExistsException;
+import com.escribasmostachos.Escribasmostachos.exception.ResourceAlreadyExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.repository.UserRepository;
 
@@ -48,11 +48,11 @@ public class AuthService {
             String existingUsername = existingUser.get().getUsername();
 
             if (existingEmail.equals(registerRequest.getEmail())) {
-                throw new UserAlreadyExistsException("Email already in use");
+                throw new ResourceAlreadyExistsOnDatabaseException("Email already in use");
             }
 
             if (existingUsername.equals(registerRequest.getUsername())) {
-                throw new UserAlreadyExistsException("Username already taken");
+                throw new ResourceAlreadyExistsOnDatabaseException("Username already taken");
             }
         }
 

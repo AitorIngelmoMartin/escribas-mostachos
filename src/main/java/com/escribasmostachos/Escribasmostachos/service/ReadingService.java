@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
 import com.escribasmostachos.Escribasmostachos.dto.BookReadingDto;
-import com.escribasmostachos.Escribasmostachos.exception.BookDontExistsException;
+import com.escribasmostachos.Escribasmostachos.exception.ResourceDontExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.Book;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.model.UserBookRead;
@@ -44,7 +44,7 @@ public class ReadingService {
 
         Optional<Book> book = bookRepository.findByIsbn(dto.getIsbn());
         if (!book.isPresent())  {
-            throw new BookDontExistsException("No book found with ISBN: " + dto.getIsbn());
+            throw new ResourceDontExistsOnDatabaseException("No book found with ISBN: " + dto.getIsbn());
         }
 
         User userThatReadTheBook = user.get();

@@ -10,9 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
 import com.escribasmostachos.Escribasmostachos.dto.BookUpdateDTO;
-import com.escribasmostachos.Escribasmostachos.exception.BookAlreadyExistsException;
-import com.escribasmostachos.Escribasmostachos.exception.BookDontExistsException;
 import com.escribasmostachos.Escribasmostachos.exception.InvalidIsbnException;
+import com.escribasmostachos.Escribasmostachos.exception.ResourceAlreadyExistsOnDatabaseException;
+import com.escribasmostachos.Escribasmostachos.exception.ResourceDontExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.Book;
 import com.escribasmostachos.Escribasmostachos.repository.BookRepository;
 
@@ -37,7 +37,7 @@ public class BookService {
 
     public Book addBookToDatabase(BookDTO bookDto, String username) {
         if (bookRepository.findByIsbn(bookDto.getIsbn()).isPresent()) {
-            throw new BookAlreadyExistsException("A book with ISBN: " + bookDto.getIsbn() + " already exists");
+            throw new ResourceAlreadyExistsOnDatabaseException("A book with ISBN: " + bookDto.getIsbn() + " already exists");
         }
 
         Book newBook = new Book().fromDto(bookDto);
@@ -58,7 +58,7 @@ public class BookService {
 
         Optional<Book> bookReadedFromDatabase = bookRepository.findByIsbn(bookUpdateDto.getBookIsbn());
         if (!bookReadedFromDatabase.isPresent()) {
-            throw new BookDontExistsException("A book with ISBN: " + bookUpdateDto.getBookIsbn() + " don't exists");
+            throw new ResourceDontExistsOnDatabaseException("A book with ISBN: " + bookUpdateDto.getBookIsbn() + " don't exists");
         }
         
         Book oldBookInfo = bookReadedFromDatabase.get();

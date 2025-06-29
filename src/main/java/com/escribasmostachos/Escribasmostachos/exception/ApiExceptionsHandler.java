@@ -22,31 +22,16 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class ApiExceptionsHandler {
 
-    // Custom exceptions
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ApiResponseDto<Void>> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
-        log.error("User already exists: " + ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ApiResponseDto<Void>(HttpStatus.CONFLICT, "A user already exists with that email"));
-    }
-
-    @ExceptionHandler(UserDontExistsException.class)
-    public ResponseEntity<ApiResponseDto<Void>> handleUserDontExistsException(UserDontExistsException ex) {
-        log.error("User don't exists: " + ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
-    }
-
-    @ExceptionHandler(BookAlreadyExistsException.class)
-    public ResponseEntity<ApiResponseDto<Void>> handleBookAlreadyExistsException(BookAlreadyExistsException ex) {
-        log.error("Book already exists: " + ex.getMessage());
+    @ExceptionHandler(ResourceAlreadyExistsOnDatabaseException.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleResourceAlreadyExistsOnDatabaseException(ResourceAlreadyExistsOnDatabaseException ex) {
+        log.error("Resource already exists: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ApiResponseDto<Void>(HttpStatus.CONFLICT, ex.getMessage()));
     }
 
-    @ExceptionHandler(BookDontExistsException.class)
-    public ResponseEntity<ApiResponseDto<Void>> handleBookDontExistsException(BookDontExistsException ex) {
-        log.error("Book don't exists: " + ex.getMessage());
+    @ExceptionHandler(ResourceDontExistsOnDatabaseException.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleResourceDontExistsOnDatabaseException(ResourceDontExistsOnDatabaseException ex) {
+        log.error("Resource don't exists: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
