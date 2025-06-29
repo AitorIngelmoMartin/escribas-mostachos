@@ -1,11 +1,14 @@
 package com.escribasmostachos.Escribasmostachos.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
 import com.escribasmostachos.Escribasmostachos.dto.BookReadingDto;
 import com.escribasmostachos.Escribasmostachos.exception.BookDontExistsException;
 import com.escribasmostachos.Escribasmostachos.model.Book;
@@ -58,5 +61,15 @@ public class ReadingService {
         userBookReadRepository.save(userRead);
         userThatReadTheBook.setBooksReadCount(userThatReadTheBook.getBooksReadCount() + 1);
         return true;
+    }
+    
+    @Transactional(readOnly = true)
+    public List<BookDTO> getBooksReadByUser(Long userId) {
+        log.info("Getting reads for user with id: " + userId);
+        List<UserBookRead> userReads = userBookReadRepository.findByUserId(userId);
+        List<BookDTO> bookDtos = userReads.stream()
+            .map(userBookRead -> userBookRead.getBook().toBookDto())
+            .collect(Collectors.toList());
+        return bookDtos;
     }
 }
