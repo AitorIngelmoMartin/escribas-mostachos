@@ -44,11 +44,10 @@ public class ProfileController {
         User user = (User) authentication.getPrincipal();
         boolean somethingWasUpdated = profileService.updateUserProfile(dto, user.getUsername());
 
-        ApiResponseDto<Void> updateUserProfileResponse = new ApiResponseDto<Void>(HttpStatus.OK, "nothing to update");
-        if(somethingWasUpdated){
-            updateUserProfileResponse = new ApiResponseDto<Void>(HttpStatus.OK, "user profile successfully updated");
-        }
-        return ResponseEntity.ok(updateUserProfileResponse);
+        String message = somethingWasUpdated
+            ? "user profile successfully updated"
+            : "nothing to update";
+        return ResponseEntity.ok(new ApiResponseDto<Void>(HttpStatus.OK, message));
     }
 
     @GetMapping("/users/{username}")
