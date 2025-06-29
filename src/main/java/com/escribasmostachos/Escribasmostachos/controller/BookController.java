@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDto;
 import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
+import com.escribasmostachos.Escribasmostachos.dto.BookUpdateDTO;
 import com.escribasmostachos.Escribasmostachos.model.Book;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.BookService;
@@ -59,5 +61,16 @@ public class BookController {
 
         Book createdBook = bookService.addBookToDatabase(bookDto, user.getUsername());
         return ResponseEntity.ok(new ApiResponseDto<Book>(HttpStatus.OK, "Book created successfully", createdBook));
+    }
+
+    @PatchMapping
+    public ResponseEntity<ApiResponseDto<Void>> updateBookInfo(@Valid @RequestBody BookUpdateDTO bookUpdateDto, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        boolean somethingWasUpdated = bookService.updateBookFromDatabase(bookUpdateDto, user.getUsername());
+
+        String message = somethingWasUpdated
+            ? "book information successfully updated"
+            : "nothing to update";
+        return ResponseEntity.ok(new ApiResponseDto<Void>(HttpStatus.OK, message));
     }
 }

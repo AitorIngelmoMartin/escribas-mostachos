@@ -37,6 +37,12 @@ public class ApiExceptionsHandler {
                 .body(new ApiResponseDto<Void>(HttpStatus.CONFLICT, ex.getMessage()));
     }
 
+    @ExceptionHandler(BookDontExistsException.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleBookDontExistsException(BookDontExistsException ex) {
+        log.error("Book don't exists: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponseDto<Void>(HttpStatus.CONFLICT, ex.getMessage()));
+    }
     // API requests exceptions
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponseDto<Void>> handleBadCredentialsException(BadCredentialsException ex) {
