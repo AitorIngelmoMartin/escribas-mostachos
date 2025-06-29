@@ -37,10 +37,23 @@ public class ApiExceptionsHandler {
                 .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
 
+    @ExceptionHandler(BookAlreadyExistsException.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleBookAlreadyExistsException(BookAlreadyExistsException ex) {
+        log.error("Book already exists: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponseDto<Void>(HttpStatus.CONFLICT, ex.getMessage()));
+    }
+
     // API requests exceptions
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponseDto<Void>> handleBadCredentialsException(BadCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, "Username or password not valid"));
+    }
+
+   @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponseDto<Void>>handleInvalidJson(HttpMessageNotReadableException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, "Malformed JSON"));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
