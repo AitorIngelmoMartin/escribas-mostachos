@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.escribasmostachos.Escribasmostachos.security.AuthTokenFilter;
+import com.escribasmostachos.Escribasmostachos.service.JwtService;
 
 import java.util.List;
 
@@ -27,9 +28,15 @@ public class SecurityConfig {
     @Value("${jwt.secret}")
     private String secretKey;
     
+    private final JwtService jwtService;
+
+    public SecurityConfig(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
+        return new AuthTokenFilter(jwtService);
     }
 
     @Bean
