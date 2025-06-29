@@ -13,11 +13,13 @@ import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDto;
 import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDto;
 import com.escribasmostachos.Escribasmostachos.dto.UserProfileDto;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -58,6 +60,9 @@ public class User implements UserDetails {
     private Book currentBook;
 
     private LocalDate membershipDate;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<UserBookRead> booksRead = new java.util.ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
