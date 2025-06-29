@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.Authentication;
 
 import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDto;
+import com.escribasmostachos.Escribasmostachos.dto.BookReadingDto;
 import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDto;
 import com.escribasmostachos.Escribasmostachos.dto.UserProfileDto;
 import com.escribasmostachos.Escribasmostachos.model.User;
@@ -59,5 +61,16 @@ public class UserController {
         UserProfileDto userProfileDto = userService.getProfile(username);
 
         return ResponseEntity.ok(new ApiResponseDto<UserProfileDto>(HttpStatus.OK, "user profile obtained", userProfileDto));
+    }
+
+    @PostMapping("/readings")
+    public ResponseEntity<ApiResponseDto<Void>> markBookAsRead(@Valid @RequestBody BookReadingDto dto, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+
+        boolean readAdded = userService.markBookAsRead(dto, user.getUsername());
+        String message = readAdded
+            ? "Read successfully registered"
+            : "Read already registered";
+        return ResponseEntity.ok(new ApiResponseDto<Void>(HttpStatus.OK, message));
     }
 }
