@@ -1,0 +1,48 @@
+package com.escribasmostachos.Escribasmostachos.controller;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDto;
+import com.escribasmostachos.Escribasmostachos.model.Book;
+import com.escribasmostachos.Escribasmostachos.service.BookService;
+
+@RestController
+@RequestMapping("/books")
+public class BookController {
+    
+    private BookService bookService;
+
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
+    
+    @GetMapping
+    public ResponseEntity<ApiResponseDto<List<Book>>> getBooks(
+        @RequestParam(defaultValue = "10") int limit,
+        @RequestParam(defaultValue = "0") int page) {
+        List<Integer> allowedLimits = List.of(10, 25, 50);
+
+        if (!allowedLimits.contains(limit)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto<>(
+                HttpStatus.BAD_REQUEST,
+                "Invalid 'limit' value. Allowed values are 10, 25, or 50."
+            ));
+        }
+        
+        if (page < 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto<>(
+                HttpStatus.BAD_REQUEST,
+                "Invalid 'page' value. The value must be greater than or equal to zero."
+            ));
+        }
+        List<Book> books = bookService.getBooks(limit, page);
+        return ResponseEntity.ok(new ApiResponseDto<List<Book>>(HttpStatus.OK, "Books retrieved successfully", books));
+    }
+}
