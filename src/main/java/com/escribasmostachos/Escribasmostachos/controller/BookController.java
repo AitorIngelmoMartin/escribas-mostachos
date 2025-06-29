@@ -4,14 +4,21 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDto;
+import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
 import com.escribasmostachos.Escribasmostachos.model.Book;
+import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.BookService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/books")
@@ -44,5 +51,13 @@ public class BookController {
         }
         List<Book> books = bookService.getBooks(limit, page);
         return ResponseEntity.ok(new ApiResponseDto<List<Book>>(HttpStatus.OK, "Books retrieved successfully", books));
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponseDto<Book>> registryBook(@Valid @RequestBody BookDTO bookDto, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+
+        Book createdBook = bookService.addBookToDatabase(bookDto, user.getUsername());
+        return ResponseEntity.ok(new ApiResponseDto<Book>(HttpStatus.OK, "Book created successfully", createdBook));
     }
 }
