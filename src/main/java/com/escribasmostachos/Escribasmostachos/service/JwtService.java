@@ -33,7 +33,7 @@ public class JwtService {
         return Jwts.builder()
             .setSubject(user.getUsername())
             .claim("email", user.getEmail())
-            .claim("id", user.getId())
+            .claim("userId", user.getId())
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1h
             .signWith(key, SignatureAlgorithm.HS256)
@@ -56,6 +56,9 @@ public class JwtService {
         return tokenClaims.get("email", String.class);
     }
 
+    public Long getUserIdFromTokenClaims(Claims tokenClaims) {
+        return tokenClaims.get("userId", Long.class);
+    }
     /**
      * Validates the given JWT token.
      * 

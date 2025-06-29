@@ -59,7 +59,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             User user = new User();
             user.setUsername(jwtService.getUsernameFromTokenClaims(tokenClaims));
             user.setEmail(jwtService.getEmailFromTokenClaims(tokenClaims));
-
+            user.setId(jwtService.getUserIdFromTokenClaims(tokenClaims));
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             
