@@ -8,7 +8,7 @@ format = "json"
 body = '''
 {
     "email":"c@d.com",
-    "username":"user_3",
+    "username":"username_3",
     "password":"password"
 }'''
 
