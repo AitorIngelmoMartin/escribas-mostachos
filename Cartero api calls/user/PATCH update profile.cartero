@@ -1,5 +1,5 @@
 version = 1
-url = "http://127.0.0.1:8080/profile"
+url = "http://127.0.0.1:8080/user"
 method = "PATCH"
 
 [body]
@@ -13,8 +13,8 @@ body = '''
 }'''
 
 [headers]
-Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwiaWQiOjEsImlhdCI6MTc1MTEyNTg2MywiZXhwIjoxNzUxMTI5NDYzfQ.eriWVP9Z8TFIyYu2bTmuLQmvsFZD6WnjFlZ5GCqIY4Q"
 Content-Type = "application/json"
+Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwiaWQiOjEsImlhdCI6MTc1MTIxNDk5NywiZXhwIjoxNzUxMjE4NTk3fQ.KD1hF9qgbjmJlcO_jshLUH1q8xGXCqvwCBfFufK1qvg"
 
 [variables]
 
