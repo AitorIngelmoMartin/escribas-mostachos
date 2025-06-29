@@ -43,6 +43,14 @@ public class ApiExceptionsHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ApiResponseDto<Void>(HttpStatus.CONFLICT, ex.getMessage()));
     }
+
+    @ExceptionHandler(InvalidIsbnException.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleInvalidIsbnException(InvalidIsbnException ex) {
+        log.error("Invalid ISBN exception: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
     // API requests exceptions
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponseDto<Void>> handleBadCredentialsException(BadCredentialsException ex) {
