@@ -30,6 +30,13 @@ public class ApiExceptionsHandler {
                 .body(new ApiResponseDto<Void>(HttpStatus.CONFLICT, "A user already exists with that email"));
     }
 
+    @ExceptionHandler(UserDontExistsException.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleUserDontExistsException(UserDontExistsException ex) {
+        log.error("User don't exists: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
     @ExceptionHandler(BookAlreadyExistsException.class)
     public ResponseEntity<ApiResponseDto<Void>> handleBookAlreadyExistsException(BookAlreadyExistsException ex) {
         log.error("Book already exists: " + ex.getMessage());
@@ -49,6 +56,13 @@ public class ApiExceptionsHandler {
         log.error("Invalid ISBN exception: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+    @ExceptionHandler(IncoherentOperationException.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleIncoherentOperationException(IncoherentOperationException ex) {
+        log.error("Incoherent operation: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, "Incoherent operation: " + ex.getMessage()));
     }
 
     // API requests exceptions
