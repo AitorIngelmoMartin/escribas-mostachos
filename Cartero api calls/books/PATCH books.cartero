@@ -1,0 +1,23 @@
+version = 1
+url = "http://127.0.0.1:8080/books"
+method = "PATCH"
+
+[body]
+type = "raw"
+format = "json"
+body = '''
+{
+  "oldIsbn": "9788441532106",
+  "newIsbn": "9788408304753",
+  "title": "Effective Java",
+  "author": "Joshua Bloch",
+  "coverUrl": "https://example.com/covers/effective-java.jpg"
+}'''
+
+[headers]
+Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwiaWQiOjEsImlhdCI6MTc1MTIwNjk5NywiZXhwIjoxNzUxMjEwNTk3fQ.03qKR_XJjnali1LbUW85mrSGs_Z1jtgGL6LHhUIhnsE"
+Content-Type = "application/json"
+
+[variables]
+
+[inactive-params]
