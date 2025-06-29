@@ -3,11 +3,13 @@ package com.escribasmostachos.Escribasmostachos.model;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
+import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDto;
 import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDto;
 import com.escribasmostachos.Escribasmostachos.dto.UserProfileDto;
 
@@ -88,5 +90,19 @@ public class User implements UserDetails {
 
         dto.setMembershipDate(this.membershipDate);
         return dto;
+    }
+
+    public void updatePropertiesFromDto(ProfileUpdateDto dto) {
+        if (dto.getFirstName() != null && !Objects.equals(this.firstName, dto.getFirstName())) {
+            this.firstName = dto.getFirstName();
+        }
+
+        if (dto.getLastName() != null && !Objects.equals(this.lastName, dto.getLastName())) {
+            this.lastName = dto.getLastName();
+        }
+
+        if (dto.getProfilePictureUrl() != null && !Objects.equals(this.profilePictureUrl, dto.getProfilePictureUrl())) {
+            this.profilePictureUrl = dto.getProfilePictureUrl();
+        }
     }
 }

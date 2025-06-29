@@ -27,27 +27,18 @@ public class ProfileService {
     @Transactional
     public boolean updateUserProfile(ProfileUpdateDto dto, String username){
 
-        if (allFieldsNull(dto)){
+        if (!haveSomethingToUpdate(dto)){
             return false;
         }
         
         User oldUserInfo = userService.loadUserByUsername(username);
-        if (dto.getFirstName() != null) {
-            oldUserInfo.setFirstName(dto.getFirstName());
-        }
-        if (dto.getLastName() != null) {
-            oldUserInfo.setLastName(dto.getLastName());
-        }
-        if (dto.getProfilePictureUrl() != null) {
-            oldUserInfo.setProfilePictureUrl(dto.getProfilePictureUrl());
-        }
-
+        oldUserInfo.updatePropertiesFromDto(dto);
         return true;
     }
 
-    private boolean allFieldsNull(ProfileUpdateDto dto) {
-    return dto.getFirstName() == null &&
-           dto.getLastName() == null &&
-           dto.getProfilePictureUrl() == null;
+    private boolean haveSomethingToUpdate(ProfileUpdateDto dto) {
+        return (dto.getFirstName() != null) ||
+            (dto.getLastName() != null) ||
+            (dto.getProfilePictureUrl() != null);
     }
 }
