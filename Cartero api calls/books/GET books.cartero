@@ -1,10 +1,10 @@
 version = 1
-url = "http://127.0.0.1:8080/books?limit=10&page=2"
+url = "http://127.0.0.1:8080/books?limit=10&page=1"
 method = "GET"
 
 [headers]
+Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwiaWQiOjEsImlhdCI6MTc1MTIwNjk5NywiZXhwIjoxNzUxMjEwNTk3fQ.03qKR_XJjnali1LbUW85mrSGs_Z1jtgGL6LHhUIhnsE"
 Content-Type = "application/json"
-Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwiaWQiOjEsImlhdCI6MTc1MTE4OTYyMCwiZXhwIjoxNzUxMTkzMjIwfQ.uA22WLxgTMXKYbxECgSTJgHrFikK5GFVGJZ_cYNUt-s"
 
 [variables]
 
