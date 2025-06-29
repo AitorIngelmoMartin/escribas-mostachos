@@ -1,5 +1,5 @@
 version = 1
-url = "http://127.0.0.1:8080/user/readings"
+url = "http://127.0.0.1:8080/readings"
 method = "POST"
 
 [body]
@@ -7,7 +7,7 @@ type = "raw"
 format = "json"
 body = '''
 {
-  "isbn": "9788408304753"
+  "isbn": "9788441532106"
 }'''
 
 [headers]
