@@ -35,9 +35,9 @@ public class ReadingService {
     }
 
     @Transactional
-    public boolean markBookAsRead(BookReadingDto dto, String username) {
-        log.info("Finding user with username: " + username);
-        Optional<User> user = userRepository.findByUsername(username);
+    public boolean markBookAsRead(BookReadingDto dto, Long userId) {
+        log.info("Finding user with userId: " + userId);
+        Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent())  {
             throw new UsernameNotFoundException("User not found");
         }

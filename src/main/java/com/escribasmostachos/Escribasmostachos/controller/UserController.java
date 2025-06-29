@@ -35,14 +35,14 @@ public class UserController {
     @GetMapping
     public ResponseEntity<ApiResponseDto<UserProfileDto>> getProfile(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        UserProfileDto userProfileDto = userService.getProfile(user.getUsername());
+        UserProfileDto userProfileDto = userService.getProfileByUserId(user.getId());
         return ResponseEntity.ok(new ApiResponseDto<UserProfileDto>(HttpStatus.OK, "user profile obtained", userProfileDto));
     }
 
     @PatchMapping
     public ResponseEntity<ApiResponseDto<Void>> updateUserProfile(@Valid @RequestBody ProfileUpdateDto dto, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        boolean somethingWasUpdated = userService.updateUserProfile(dto, user.getUsername());
+        boolean somethingWasUpdated = userService.updateUserProfile(dto, user.getId());
 
         String message = somethingWasUpdated
             ? "user profile successfully updated"
@@ -56,7 +56,7 @@ public class UserController {
             @Size(min = 3, max = 20, message = "Invalid username size")
             @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Invalid username format")
             String username) {
-        UserProfileDto userProfileDto = userService.getProfile(username);
+        UserProfileDto userProfileDto = userService.getProfileByUsername(username);
 
         return ResponseEntity.ok(new ApiResponseDto<UserProfileDto>(HttpStatus.OK, "user profile obtained", userProfileDto));
     }

@@ -35,18 +35,31 @@ public class UserService implements UserDetailsService {
         return userOpt.get();
     }
 
-    public UserProfileDto getProfile(String username){
+    private User getUserById(Long userId){
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (!userOpt.isPresent())  {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return userOpt.get();
+    }
+
+    public UserProfileDto getProfileByUserId(Long userId){
+        log.info("Finding user with userId: " +  userId);
+        return getUserById(userId).toProfileDto();
+    }
+
+    public UserProfileDto getProfileByUsername(String username){
         return loadUserByUsername(username).toProfileDto();
     }
 
     @Transactional
-    public boolean updateUserProfile(ProfileUpdateDto dto, String username){
+    public boolean updateUserProfile(ProfileUpdateDto dto, Long userId){
 
         if (!haveSomethingToUpdate(dto)){
             return false;
         }
         
-        User oldUserInfo = loadUserByUsername(username);
+        User oldUserInfo = getUserById(userId);
         oldUserInfo.updatePropertiesFromDto(dto);
         return true;
     }

@@ -35,7 +35,7 @@ public class ReadingController {
     public ResponseEntity<ApiResponseDto<Void>> markBookAsRead(@Valid @RequestBody BookReadingDto dto, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         
-        boolean readAdded = readingService.markBookAsRead(dto, user.getUsername());
+        boolean readAdded = readingService.markBookAsRead(dto, user.getId());
         String message = readAdded
             ? "Read successfully registered"
             : "Read already registered";
