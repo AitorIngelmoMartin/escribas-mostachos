@@ -1,7 +1,6 @@
 package com.escribasmostachos.Escribasmostachos.service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.validator.routines.ISBNValidator;
@@ -48,13 +47,7 @@ public class BookService {
 
     @Transactional
     public boolean updateBookFromDatabase(BookUpdateDTO bookUpdateDto, String username) {
-        Optional<Book> bookReadedFromDatabase = bookRepository.findByIsbn(bookUpdateDto.getOldIsbn());
-        if (!bookReadedFromDatabase.isPresent()) {
-            throw new BookDontExistsException("A book with ISBN: " + bookUpdateDto.getOldIsbn() + " don't exists");
-        }
-        
-        Book oldBookInfo = bookReadedFromDatabase.get();
-        if (!haveSomethingToUpdate(bookUpdateDto, oldBookInfo)){
+        if (!haveSomethingToUpdate(bookUpdateDto)){
             return false;
         }
 
@@ -63,16 +56,22 @@ public class BookService {
             throw new InvalidIsbnException(bookUpdateDto.getNewIsbn() + " is an invalid ISBN");
         }
 
+        Optional<Book> bookReadedFromDatabase = bookRepository.findByIsbn(bookUpdateDto.getBookIsbn());
+        if (!bookReadedFromDatabase.isPresent()) {
+            throw new BookDontExistsException("A book with ISBN: " + bookUpdateDto.getBookIsbn() + " don't exists");
+        }
+        
+        Book oldBookInfo = bookReadedFromDatabase.get();
         oldBookInfo.updatePropertiesFromDto(bookUpdateDto);
         oldBookInfo.setUpdatedBy(username);
         return true;
     }
 
-    public boolean haveSomethingToUpdate(BookUpdateDTO dto, Book currentBook) {
-        return (dto.getNewIsbn() != null && !Objects.equals(currentBook.getIsbn(), dto.getNewIsbn())) ||
-            (dto.getTitle() != null && !Objects.equals(currentBook.getTitle(), dto.getTitle())) ||
-            (dto.getAuthor() != null && !Objects.equals(currentBook.getAuthor(), dto.getAuthor())) ||
-            (dto.getCoverUrl() != null && !Objects.equals(currentBook.getCoverUrl(), dto.getCoverUrl()));
+    public boolean haveSomethingToUpdate(BookUpdateDTO dto) {
+        return (dto.getNewIsbn() != null) ||
+            (dto.getTitle() != null) ||
+            (dto.getAuthor() != null) ||
+            (dto.getCoverUrl() != null);
     }
 }
 

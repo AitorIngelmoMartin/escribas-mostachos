@@ -12,7 +12,7 @@ public class BookUpdateDTO {
 
     @NotBlank(message = "ISBN must not be blank")
     @IsbnValid(message = "The ISBN must be valid ISBN-10 or ISBN-13")
-    private String oldIsbn;
+    private String bookIsbn;
 
     private String newIsbn;
 
