@@ -1,0 +1,11 @@
+version = 1
+url = "http://127.0.0.1:8080/books"
+method = "POST"
+
+[headers]
+Content-Type = "application/json"
+Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwiaWQiOjEsImlhdCI6MTc1MTE4OTYyMCwiZXhwIjoxNzUxMTkzMjIwfQ.uA22WLxgTMXKYbxECgSTJgHrFikK5GFVGJZ_cYNUt-s"
+
+[variables]
+
+[inactive-params]
