@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,6 +22,22 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class ApiExceptionsHandler {
 
+    // Custom exceptions
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+        log.error("User already exists: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponseDto<Void>(HttpStatus.CONFLICT, "A user already exists with that email"));
+    }
+
+    @ExceptionHandler(InvalidIsbnException.class)
+    public ResponseEntity<ApiResponseDto<Void>> handleInvalidIsbnException(InvalidIsbnException ex) {
+        log.error("Invalid ISBN exception: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+    // API requests exceptions
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponseDto<Void>> handleBadCredentialsException(BadCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, "Username or password not valid"));
@@ -57,13 +74,6 @@ public class ApiExceptionsHandler {
         log.error("API request have some errors: " + errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiResponseDto<Void>(HttpStatus.BAD_REQUEST, errors));
-    }
-
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ApiResponseDto<Void>> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
-        log.error("User already exists: " + ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ApiResponseDto<Void>(HttpStatus.CONFLICT, "A user already exists with that email"));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
