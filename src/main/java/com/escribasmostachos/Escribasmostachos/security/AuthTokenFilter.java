@@ -42,8 +42,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
     
-        if (request.getRequestURI().startsWith("/auth")) {
+        String uri = request.getRequestURI();
+        if (uri.startsWith("/auth")
+                || uri.startsWith("/swagger-ui")
+                || uri.startsWith("/v3/api-docs")
+                || uri.equals("/swagger-ui.html")) {
             filterChain.doFilter(request, response);
+            log.debug("Skipping token validation for Swagger or auth path");
             return;
         }
         try {
