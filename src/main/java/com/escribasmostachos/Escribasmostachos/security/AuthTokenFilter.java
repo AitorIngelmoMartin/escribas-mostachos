@@ -44,6 +44,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     
         String uri = request.getRequestURI();
         if (uri.startsWith("/auth")
+                || uri.startsWith("/h2-console")
                 || uri.startsWith("/swagger-ui")
                 || uri.startsWith("/v3/api-docs")
                 || uri.equals("/swagger-ui.html")) {
