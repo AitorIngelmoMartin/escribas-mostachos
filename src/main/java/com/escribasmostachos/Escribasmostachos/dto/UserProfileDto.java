@@ -1,6 +1,8 @@
 package com.escribasmostachos.Escribasmostachos.dto;
 
 import java.time.LocalDate;
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -16,7 +18,7 @@ public class UserProfileDTO {
 
     private Integer booksReadCount;
 
-    private BookDTO currentBook;
+    private List<BookDTO> currentBooks;
 
     private LocalDate membershipDate;
 }

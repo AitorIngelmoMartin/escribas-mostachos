@@ -1,5 +1,6 @@
 package com.escribasmostachos.Escribasmostachos.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
 import com.escribasmostachos.Escribasmostachos.dto.BookReadingDTO;
+import com.escribasmostachos.Escribasmostachos.exception.ResourceAlreadyExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceDontExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.Book;
+import com.escribasmostachos.Escribasmostachos.model.ReadStatus;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.model.UserBookRead;
 import com.escribasmostachos.Escribasmostachos.repository.BookRepository;
@@ -35,7 +38,7 @@ public class ReadingService {
     }
 
     @Transactional
-    public boolean markBookAsRead(BookReadingDTO dto, Long userId) {
+    public void markBookAsRead(BookReadingDTO dto, Long userId) {
         log.info("Finding user with userId: " + userId);
         Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent())  {
@@ -44,7 +47,7 @@ public class ReadingService {
 
         Optional<Book> book = bookRepository.findByIsbn(dto.getIsbn());
         if (!book.isPresent())  {
-            throw new ResourceDontExistsOnDatabaseException("No book found with ISBN: " + dto.getIsbn());
+            throw new ResourceDontExistsOnDatabaseException("No book found on database with ISBN: " + dto.getIsbn());
         }
 
         User userThatReadTheBook = user.get();
@@ -53,23 +56,22 @@ public class ReadingService {
         boolean bookAlreadyRegistered = userBookReadRepository.existsByUserAndBook(userThatReadTheBook, bookReadByUser);
 
         if(bookAlreadyRegistered){
-            return false;
+            throw new ResourceAlreadyExistsOnDatabaseException("User already registered this read");
         }
 
         UserBookRead userRead = new UserBookRead(userThatReadTheBook, bookReadByUser);
-
+        userRead.markBookAsRead();
+        
         userBookReadRepository.save(userRead);
         userThatReadTheBook.setBooksReadCount(userThatReadTheBook.getBooksReadCount() + 1);
-        return true;
     }
     
     @Transactional(readOnly = true)
     public List<BookDTO> getBooksReadByUser(Long userId) {
         log.info("Getting reads for user with id: " + userId);
         List<UserBookRead> userReads = userBookReadRepository.findByUserId(userId);
-        List<BookDTO> bookDtos = userReads.stream()
+        return userReads.stream()
             .map(userBookRead -> userBookRead.getBook().toBookDto())
             .collect(Collectors.toList());
-        return bookDtos;
     }
 }

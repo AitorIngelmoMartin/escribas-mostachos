@@ -1,9 +1,11 @@
 package com.escribasmostachos.Escribasmostachos.model;
 
+import java.util.List;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +22,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -56,13 +57,10 @@ public class User implements UserDetails {
 
     private Integer booksReadCount = 0;
 
-    @OneToOne(optional = true)
-    private Book currentBook;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserBookRead> currentBooks;
 
     private LocalDate membershipDate;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private java.util.List<UserBookRead> booksRead = new java.util.ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -85,14 +83,16 @@ public class User implements UserDetails {
         dto.setProfilePictureUrl(this.profilePictureUrl);
         dto.setBooksReadCount(this.booksReadCount);
 
-        if (this.currentBook != null) {
-            BookDTO bookDTO = new BookDTO();
-            bookDTO.setTitle(this.currentBook.getTitle());
-            bookDTO.setAuthor(this.currentBook.getAuthor());
-            bookDTO.setCoverUrl(this.currentBook.getCoverUrl());
-            dto.setCurrentBook(bookDTO);
+        if (this.currentBooks != null) {
+            List<BookDTO> currentBookDTOs = this.currentBooks.stream()
+                .filter(read -> read.getStatus() == ReadStatus.R)
+                .map(read -> {
+                    Book book = read.getBook();
+                    return book.toBookDto();
+                })
+                .collect(Collectors.toList());
+            dto.setCurrentBooks(currentBookDTOs);
         }
-
         dto.setMembershipDate(this.membershipDate);
         return dto;
     }

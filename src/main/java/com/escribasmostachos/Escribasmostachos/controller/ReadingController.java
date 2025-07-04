@@ -35,11 +35,9 @@ public class ReadingController {
     public ResponseEntity<ApiResponseDTO<Void>> markBookAsRead(@Valid @RequestBody BookReadingDTO dto, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         
-        boolean readAdded = readingService.markBookAsRead(dto, user.getId());
-        String message = readAdded
-            ? "Read successfully registered"
-            : "Read already registered";
-        return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, message));
+        readingService.markBookAsRead(dto, user.getId());
+
+        return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, "Read successfully registered"));
     }
 
     @GetMapping("/user")

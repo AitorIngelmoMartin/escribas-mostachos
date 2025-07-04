@@ -2,7 +2,10 @@ package com.escribasmostachos.Escribasmostachos.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -36,10 +39,21 @@ public class UserBookRead {
     @JoinColumn(name = "book_id")
     private Book book;
 
-    private LocalDate readingDate = LocalDate.now();
+    @Enumerated(EnumType.STRING)
+    @Column(length = 1, nullable = false)
+    private ReadStatus status = ReadStatus.R;
+
+    private LocalDate readingStartDate = LocalDate.now();
+
+    private LocalDate readingEndDate;
 
     public UserBookRead(User user, Book book) {
         this.user = user;
         this.book = book;
+    }
+
+    public void markBookAsRead(){
+        this.status = ReadStatus.F;
+        this.readingEndDate = LocalDate.now();
     }
 }
