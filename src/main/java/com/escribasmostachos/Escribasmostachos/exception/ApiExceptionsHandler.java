@@ -43,6 +43,13 @@ public class ApiExceptionsHandler {
                 .body(new ApiResponseDTO<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
 
+    @ExceptionHandler(MaxCurrentBooksReachedException.class)
+    public ResponseEntity<ApiResponseDTO<Void>> handleMaxCurrentBooksReached(MaxCurrentBooksReachedException ex) {
+        log.warn("Max current books reached: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseDTO<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
     // API requests exceptions
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleBadCredentialsException(BadCredentialsException ex) {
