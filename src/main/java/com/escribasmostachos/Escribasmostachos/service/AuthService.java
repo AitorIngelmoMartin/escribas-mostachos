@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.escribasmostachos.Escribasmostachos.dto.LoginRequestDTO;
 import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDTO;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceAlreadyExistsOnDatabaseException;
+import com.escribasmostachos.Escribasmostachos.model.RoleType;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.repository.UserRepository;
 
@@ -59,6 +60,7 @@ public class AuthService {
         log.debug("User email received: " + registerRequest.getEmail());
         User newUser = User.fromDto(registerRequest, passwordEncoder.encode(registerRequest.getPassword()));
         newUser.setMembershipDate(LocalDate.now());
+        newUser.setRole(RoleType.ROLE_USER);
         userRepository.save(newUser);
     }
 

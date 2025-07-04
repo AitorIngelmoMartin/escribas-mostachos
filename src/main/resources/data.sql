@@ -1,5 +1,5 @@
 -- User table
-INSERT INTO users (email, username, password, books_read_count) VALUES ('a@b.com', 'username_1', '$2a$10$RjeE47YLF6vsbUDrJuL6.eRRTK5f7oS83824BflfBeJyXU6Jf39.y',0);
+INSERT INTO users (email, username, password, books_read_count, role) VALUES ('a@b.com', 'username_1', '$2a$10$RjeE47YLF6vsbUDrJuL6.eRRTK5f7oS83824BflfBeJyXU6Jf39.y',0, 'ROLE_MODERATOR');
 INSERT INTO users (email, username, password, first_name, last_name, books_read_count) VALUES ('e@f.com', 'username_2', '$2a$10$RjeE47YLF6vsbUDrJuL6.eRRTK5f7oS83824BflfBeJyXU6Jf39.y','NombreUsuario','ApellidoUsuario',0);
 
 -- Books table

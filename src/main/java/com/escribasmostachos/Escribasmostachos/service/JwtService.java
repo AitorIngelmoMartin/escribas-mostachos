@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.escribasmostachos.Escribasmostachos.model.RoleType;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.security.AuthTokenFilter;
 
@@ -34,13 +35,14 @@ public class JwtService {
             .setSubject(user.getUsername())
             .claim("email", user.getEmail())
             .claim("userId", user.getId())
+            .claim("role", user.getRole().name())
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1h
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
     }
 
-    public Claims getAllClaimsFromToken(String token) {
+    private Claims getAllClaimsFromToken(String token) {
         return Jwts.parserBuilder()
             .setSigningKey(key)
             .build()
@@ -48,17 +50,17 @@ public class JwtService {
             .getBody();
     }
 
-    public String getUsernameFromTokenClaims(Claims tokenClaims) {
-        return tokenClaims.getSubject();
+    public User buildUserFromToken(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+
+        User user = new User();
+        user.setUsername(claims.getSubject());
+        user.setEmail(claims.get("email", String.class));
+        user.setId(claims.get("userId", Long.class));
+        user.setRole(RoleType.valueOf(claims.get("role", String.class))); // Importante: convertir manualmente
+        return user;
     }
 
-    public String getEmailFromTokenClaims(Claims tokenClaims) {
-        return tokenClaims.get("email", String.class);
-    }
-
-    public Long getUserIdFromTokenClaims(Claims tokenClaims) {
-        return tokenClaims.get("userId", Long.class);
-    }
     /**
      * Validates the given JWT token.
      * 

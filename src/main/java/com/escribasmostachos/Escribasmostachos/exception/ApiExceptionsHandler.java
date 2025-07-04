@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -54,6 +55,11 @@ public class ApiExceptionsHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleBadCredentialsException(BadCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDTO<Void>(HttpStatus.BAD_REQUEST, "Username or password not valid"));
+    }
+    
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ApiResponseDTO<Void>> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponseDTO<Void>(HttpStatus.FORBIDDEN, "Access Denied: You do not have permission to access this resource"));
     }
 
    @ExceptionHandler(HttpMessageNotReadableException.class)

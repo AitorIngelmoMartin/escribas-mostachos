@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.*;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -17,7 +19,6 @@ import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -25,7 +26,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -61,12 +62,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
             jwtService.validateJwt(token);
 
-            Claims tokenClaims = jwtService.getAllClaimsFromToken(token);
-            User user = new User();
-            user.setUsername(jwtService.getUsernameFromTokenClaims(tokenClaims));
-            user.setEmail(jwtService.getEmailFromTokenClaims(tokenClaims));
-            user.setId(jwtService.getUserIdFromTokenClaims(tokenClaims));
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
+            User user = jwtService.buildUserFromToken(token);
+
+            GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().name());
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, List.of(authority));
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             
             SecurityContextHolder.getContext().setAuthentication(authentication);
