@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDto;
+import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDTO;
 import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
-import com.escribasmostachos.Escribasmostachos.dto.BookReadingDto;
+import com.escribasmostachos.Escribasmostachos.dto.BookReadingDTO;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.ReadingService;
 
@@ -32,21 +32,21 @@ public class ReadingController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponseDto<Void>> markBookAsRead(@Valid @RequestBody BookReadingDto dto, Authentication authentication) {
+    public ResponseEntity<ApiResponseDTO<Void>> markBookAsRead(@Valid @RequestBody BookReadingDTO dto, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         
         boolean readAdded = readingService.markBookAsRead(dto, user.getId());
         String message = readAdded
             ? "Read successfully registered"
             : "Read already registered";
-        return ResponseEntity.ok(new ApiResponseDto<Void>(HttpStatus.OK, message));
+        return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, message));
     }
 
     @GetMapping("/user")
-    public ResponseEntity<ApiResponseDto<List<BookDTO>>> getUserReadBooks(Authentication authentication) {
+    public ResponseEntity<ApiResponseDTO<List<BookDTO>>> getUserReadBooks(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         List<BookDTO> booksRead = readingService.getBooksReadByUser(user.getId());
 
-        return ResponseEntity.ok(new ApiResponseDto<List<BookDTO>>(HttpStatus.OK, "Books retrieved successfully", booksRead));
+        return ResponseEntity.ok(new ApiResponseDTO<List<BookDTO>>(HttpStatus.OK, "Books retrieved successfully", booksRead));
     }
 }

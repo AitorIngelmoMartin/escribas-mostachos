@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class ProfileUpdateDto {
+public class ProfileUpdateDTO {
 
     @Size(min = 3, max = 25, message = "First name must be between 3 and 25 characters")
     @Pattern(regexp = "^[\\p{L} .'-]+$", message = "invalid first name input")

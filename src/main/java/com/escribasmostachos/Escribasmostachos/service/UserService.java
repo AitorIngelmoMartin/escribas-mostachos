@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDto;
-import com.escribasmostachos.Escribasmostachos.dto.UserProfileDto;
+import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDTO;
+import com.escribasmostachos.Escribasmostachos.dto.UserProfileDTO;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.repository.UserRepository;
 
@@ -43,17 +43,17 @@ public class UserService implements UserDetailsService {
         return userOpt.get();
     }
 
-    public UserProfileDto getProfileByUserId(Long userId){
+    public UserProfileDTO getProfileByUserId(Long userId){
         log.info("Finding user with userId: " +  userId);
         return getUserById(userId).toProfileDto();
     }
 
-    public UserProfileDto getProfileByUsername(String username){
+    public UserProfileDTO getProfileByUsername(String username){
         return loadUserByUsername(username).toProfileDto();
     }
 
     @Transactional
-    public boolean updateUserProfile(ProfileUpdateDto dto, Long userId){
+    public boolean updateUserProfile(ProfileUpdateDTO dto, Long userId){
 
         if (!haveSomethingToUpdate(dto)){
             return false;
@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    private boolean haveSomethingToUpdate(ProfileUpdateDto dto) {
+    private boolean haveSomethingToUpdate(ProfileUpdateDTO dto) {
         return (dto.getFirstName() != null) ||
             (dto.getLastName() != null) ||
             (dto.getProfilePictureUrl() != null);

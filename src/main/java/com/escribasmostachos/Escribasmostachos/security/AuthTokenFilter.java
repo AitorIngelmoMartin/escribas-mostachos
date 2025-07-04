@@ -12,7 +12,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDto;
+import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDTO;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -108,7 +108,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private static void writeErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
         response.setStatus(status.value());
         response.setContentType("application/json");
-        ApiResponseDto<Void> dto = new ApiResponseDto<>(status, message);
+        ApiResponseDTO<Void> dto = new ApiResponseDTO<>(status, message);
         new ObjectMapper().writeValue(response.getWriter(), dto);
     }
 }

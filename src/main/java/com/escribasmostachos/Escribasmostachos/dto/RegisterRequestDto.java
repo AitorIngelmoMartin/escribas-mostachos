@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Email;
 import lombok.Data;
 
 @Data
-public class RegisterRequestDto {
+public class RegisterRequestDTO {
     @NotBlank
     @Email
     @Pattern(regexp = "^(?!.*\\.\\.)([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$", 

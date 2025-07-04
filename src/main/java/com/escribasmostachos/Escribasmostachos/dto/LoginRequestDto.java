@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class LoginRequestDto {
+public class LoginRequestDTO {
 
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z0-9_]+$",

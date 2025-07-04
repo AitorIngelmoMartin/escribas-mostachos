@@ -9,8 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Service;
 
-import com.escribasmostachos.Escribasmostachos.dto.LoginRequestDto;
-import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDto;
+import com.escribasmostachos.Escribasmostachos.dto.LoginRequestDTO;
+import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDTO;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceAlreadyExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.repository.UserRepository;
@@ -38,7 +38,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public void register(RegisterRequestDto registerRequest) {
+    public void register(RegisterRequestDTO registerRequest) {
         log.info("Starting register operation");
 
         Optional<User> existingUser = userRepository.findByEmailOrUsername(registerRequest.getEmail(), registerRequest.getUsername());
@@ -62,7 +62,7 @@ public class AuthService {
         userRepository.save(newUser);
     }
 
-    public String login(LoginRequestDto loginRequest) {
+    public String login(LoginRequestDTO loginRequest) {
         log.info("Starting login operation");
 
         log.debug("User name received: " + loginRequest.getUsername());

@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class UserProfileDto {
+public class UserProfileDTO {
 
     private String username;
 

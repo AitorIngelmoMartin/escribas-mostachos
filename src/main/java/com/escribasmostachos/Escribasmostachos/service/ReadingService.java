@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
-import com.escribasmostachos.Escribasmostachos.dto.BookReadingDto;
+import com.escribasmostachos.Escribasmostachos.dto.BookReadingDTO;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceDontExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.Book;
 import com.escribasmostachos.Escribasmostachos.model.User;
@@ -35,7 +35,7 @@ public class ReadingService {
     }
 
     @Transactional
-    public boolean markBookAsRead(BookReadingDto dto, Long userId) {
+    public boolean markBookAsRead(BookReadingDTO dto, Long userId) {
         log.info("Finding user with userId: " + userId);
         Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent())  {

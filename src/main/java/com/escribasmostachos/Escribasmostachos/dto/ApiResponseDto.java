@@ -4,17 +4,17 @@ import org.springframework.http.HttpStatus;
 import lombok.Data;
 
 @Data
-public class ApiResponseDto<T> {
+public class ApiResponseDTO<T> {
     private int status;
     private String message;
     private T data;
 
-    public ApiResponseDto(HttpStatus status, String message) {
+    public ApiResponseDTO(HttpStatus status, String message) {
         this.status = status.value();
         this.message = message;
     }
 
-    public ApiResponseDto(HttpStatus status, String message, T data) {
+    public ApiResponseDTO(HttpStatus status, String message, T data) {
         this.status = status.value();
         this.message = message;
         this.data = data;

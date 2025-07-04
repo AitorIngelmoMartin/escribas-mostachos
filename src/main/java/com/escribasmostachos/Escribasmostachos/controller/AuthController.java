@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDto;
-import com.escribasmostachos.Escribasmostachos.dto.LoginRequestDto;
-import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDto;
+import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDTO;
+import com.escribasmostachos.Escribasmostachos.dto.LoginRequestDTO;
+import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDTO;
 import com.escribasmostachos.Escribasmostachos.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -25,20 +25,20 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponseDto<Void>> registerUser(@Valid @RequestBody RegisterRequestDto registerRequest) {
+    public ResponseEntity<ApiResponseDTO<Void>> registerUser(@Valid @RequestBody RegisterRequestDTO registerRequest) {
         authService.register(registerRequest);
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(new ApiResponseDto<Void>(HttpStatus.OK, "user successfully registered"));
+            .body(new ApiResponseDTO<Void>(HttpStatus.OK, "user successfully registered"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponseDto<String>> authenticateUser(@Valid @RequestBody LoginRequestDto loginRequest) {
+    public ResponseEntity<ApiResponseDTO<String>> authenticateUser(@Valid @RequestBody LoginRequestDTO loginRequest) {
         String token = authService.login(loginRequest);
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(new ApiResponseDto<String>(HttpStatus.OK, "user successfully logged", token));
+            .body(new ApiResponseDTO<String>(HttpStatus.OK, "user successfully logged", token));
     }
 }

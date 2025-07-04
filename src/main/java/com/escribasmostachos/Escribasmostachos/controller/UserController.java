@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.security.core.Authentication;
 
-import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDto;
-import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDto;
-import com.escribasmostachos.Escribasmostachos.dto.UserProfileDto;
+import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDTO;
+import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDTO;
+import com.escribasmostachos.Escribasmostachos.dto.UserProfileDTO;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.UserService;
 
@@ -33,31 +33,31 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseDto<UserProfileDto>> getProfile(Authentication authentication) {
+    public ResponseEntity<ApiResponseDTO<UserProfileDTO>> getProfile(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        UserProfileDto userProfileDto = userService.getProfileByUserId(user.getId());
-        return ResponseEntity.ok(new ApiResponseDto<UserProfileDto>(HttpStatus.OK, "user profile obtained", userProfileDto));
+        UserProfileDTO userProfileDto = userService.getProfileByUserId(user.getId());
+        return ResponseEntity.ok(new ApiResponseDTO<UserProfileDTO>(HttpStatus.OK, "user profile obtained", userProfileDto));
     }
 
     @PatchMapping
-    public ResponseEntity<ApiResponseDto<Void>> updateUserProfile(@Valid @RequestBody ProfileUpdateDto dto, Authentication authentication) {
+    public ResponseEntity<ApiResponseDTO<Void>> updateUserProfile(@Valid @RequestBody ProfileUpdateDTO dto, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         boolean somethingWasUpdated = userService.updateUserProfile(dto, user.getId());
 
         String message = somethingWasUpdated
             ? "user profile successfully updated"
             : "nothing to update";
-        return ResponseEntity.ok(new ApiResponseDto<Void>(HttpStatus.OK, message));
+        return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, message));
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<ApiResponseDto<UserProfileDto>> getUserProfile(
+    public ResponseEntity<ApiResponseDTO<UserProfileDTO>> getUserProfile(
             @PathVariable
             @Size(min = 3, max = 20, message = "Invalid username size")
             @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Invalid username format")
             String username) {
-        UserProfileDto userProfileDto = userService.getProfileByUsername(username);
+        UserProfileDTO userProfileDto = userService.getProfileByUsername(username);
 
-        return ResponseEntity.ok(new ApiResponseDto<UserProfileDto>(HttpStatus.OK, "user profile obtained", userProfileDto));
+        return ResponseEntity.ok(new ApiResponseDTO<UserProfileDTO>(HttpStatus.OK, "user profile obtained", userProfileDto));
     }
 }

@@ -9,9 +9,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
-import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDto;
-import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDto;
-import com.escribasmostachos.Escribasmostachos.dto.UserProfileDto;
+import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDTO;
+import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDTO;
+import com.escribasmostachos.Escribasmostachos.dto.UserProfileDTO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -69,7 +69,7 @@ public class User implements UserDetails {
         return Collections.emptyList();
     }
 
-    public static User fromDto(RegisterRequestDto dto, String encodedPassword) {
+    public static User fromDto(RegisterRequestDTO dto, String encodedPassword) {
         User user = new User();
         user.setEmail(dto.getEmail());
         user.setUsername(dto.getUsername());
@@ -77,8 +77,8 @@ public class User implements UserDetails {
         return user;
     }
 
-    public UserProfileDto toProfileDto() {
-        UserProfileDto dto = new UserProfileDto();
+    public UserProfileDTO toProfileDto() {
+        UserProfileDTO dto = new UserProfileDTO();
         dto.setUsername(this.username);
         dto.setFirstName(this.firstName);
         dto.setLastName(this.lastName);
@@ -97,7 +97,7 @@ public class User implements UserDetails {
         return dto;
     }
 
-    public void updatePropertiesFromDto(ProfileUpdateDto dto) {
+    public void updatePropertiesFromDto(ProfileUpdateDTO dto) {
         if (dto.getFirstName() != null && !Objects.equals(this.firstName, dto.getFirstName())) {
             this.firstName = dto.getFirstName();
         }
