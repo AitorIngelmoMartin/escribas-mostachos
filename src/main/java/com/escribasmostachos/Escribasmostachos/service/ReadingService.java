@@ -4,20 +4,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
 import com.escribasmostachos.Escribasmostachos.dto.BookReadingDTO;
+import com.escribasmostachos.Escribasmostachos.exception.MaxCurrentBooksReachedException;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceAlreadyExistsOnDatabaseException;
-import com.escribasmostachos.Escribasmostachos.exception.ResourceDontExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.Book;
+import com.escribasmostachos.Escribasmostachos.model.ReadStatus;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.model.UserBookRead;
-import com.escribasmostachos.Escribasmostachos.repository.BookRepository;
 import com.escribasmostachos.Escribasmostachos.repository.UserBookReadRepository;
-import com.escribasmostachos.Escribasmostachos.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,45 +24,84 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ReadingService {
 
-    private final UserRepository userRepository;
-    private final BookRepository bookRepository;
+    @Value("${escribasmostachos.configuration.max-number-of-current-reads}")
+    private Integer MAX_NUMBER_OF_CURRENT_READS;
+
+    private final UserService userService;
+    private final BookService bookService;
     private final UserBookReadRepository userBookReadRepository;
 
-    public ReadingService(UserRepository userRepository, BookRepository bookRepository, UserBookReadRepository userBookReadRepository) {
-        this.userRepository = userRepository;
-        this.bookRepository = bookRepository;
+    public ReadingService(UserService userService, BookService bookService, UserBookReadRepository userBookReadRepository) {
+        this.userService = userService;
+        this.bookService = bookService;
         this.userBookReadRepository = userBookReadRepository;
     }
 
     @Transactional
-    public void markBookAsRead(BookReadingDTO dto, Long userId) {
-        log.info("Finding user with userId: " + userId);
-        Optional<User> user = userRepository.findById(userId);
-        if (!user.isPresent())  {
-            throw new UsernameNotFoundException("User not found");
-        }
-
-        Optional<Book> book = bookRepository.findByIsbn(dto.getIsbn());
-        if (!book.isPresent())  {
-            throw new ResourceDontExistsOnDatabaseException("No book found on database with ISBN: " + dto.getIsbn());
-        }
-
-        User userThatReadTheBook = user.get();
-        Book bookReadByUser = book.get();
-
-        boolean bookAlreadyRegistered = userBookReadRepository.existsByUserAndBook(userThatReadTheBook, bookReadByUser);
+    public void addCurrentBook(BookReadingDTO dto, Long userId) {
+        User userToAddReading = userService.getUserById(userId);
+        Book bookToAdd = bookService.getBookByIsbn(dto.getIsbn());
+   
+        boolean bookAlreadyRegistered = userBookReadRepository.existsByUserAndBook(userToAddReading, bookToAdd);
 
         if(bookAlreadyRegistered){
             throw new ResourceAlreadyExistsOnDatabaseException("User already registered this read");
         }
+        long userCurrentReadingCount = userToAddReading.getCurrentBooks().stream()
+            .filter(read -> read.getStatus() == ReadStatus.R)
+            .count();
 
-        UserBookRead userRead = new UserBookRead(userThatReadTheBook, bookReadByUser);
-        userRead.markBookAsRead();
-        
-        userBookReadRepository.save(userRead);
-        userThatReadTheBook.setBooksReadCount(userThatReadTheBook.getBooksReadCount() + 1);
+        if (userCurrentReadingCount >= MAX_NUMBER_OF_CURRENT_READS) {
+            throw new MaxCurrentBooksReachedException();
+        }
+
+        UserBookRead newCurrentReading = new UserBookRead(userToAddReading, bookToAdd);
+        newCurrentReading.markBookAsReading();
+        userBookReadRepository.save(newCurrentReading);
+
+        userToAddReading.addCurrentBookRead(newCurrentReading);
+        userService.save(userToAddReading);
+    }
+
+    @Transactional
+    public void markBookAsRead(BookReadingDTO dto, Long userId) {
+        User userThatReadTheBook = userService.getUserById(userId);
+        Book bookReadByUser = bookService.getBookByIsbn(dto.getIsbn());
+        log.debug("UserId: " + userThatReadTheBook.getId());
+        log.debug("BookId: " + bookReadByUser.getId());
+        Optional<UserBookRead> bookReadingAlreadyRegistered = userBookReadRepository.findByUserIdAndBookId(userThatReadTheBook.getId(), bookReadByUser.getId());
+
+        if(bookReadingAlreadyRegistered.isPresent()){
+            UserBookRead userBookRead = bookReadingAlreadyRegistered.get();
+            log.debug("Read already saved on DDBB");
+            if (userBookRead.getStatus() == ReadStatus.F){
+                throw new ResourceAlreadyExistsOnDatabaseException("User already registered this read");
+            }
+            userBookRead.markBookAsRead();
+            userBookReadRepository.save(userBookRead);
+            updateUserReadBookInfo(userThatReadTheBook, bookReadByUser, userBookRead);
+        }else{
+            log.debug("Creating new book read registry");
+            UserBookRead userBookRead = new UserBookRead(userThatReadTheBook, bookReadByUser);
+            userBookRead.markBookAsRead();
+            userBookReadRepository.save(userBookRead);
+            updateUserReadBookInfo(userThatReadTheBook, bookReadByUser, userBookRead);
+        }
     }
     
+    private void updateUserReadBookInfo(User user, Book book, UserBookRead userBookRead){
+        boolean isInCurrentBooks = user.getCurrentBooks().stream()
+                                        .anyMatch(reading -> reading.getBook()
+                                                                    .getId()
+                                                                    .equals(book.getId()));
+
+        if(isInCurrentBooks){
+            log.debug("Book was on current books read. Deleting it from the list");
+            user.removeCurrentBookRead(userBookRead);
+        }
+        user.setBooksReadCount(user.getBooksReadCount() + 1);
+    }
+
     @Transactional(readOnly = true)
     public List<BookDTO> getBooksReadByUser(Long userId) {
         log.info("Getting reads for user with id: " + userId);

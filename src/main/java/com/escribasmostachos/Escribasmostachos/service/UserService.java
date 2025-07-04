@@ -35,7 +35,8 @@ public class UserService implements UserDetailsService {
         return userOpt.get();
     }
 
-    private User getUserById(Long userId){
+    public User getUserById(Long userId){
+        log.info("Finding user with userId: " + userId);
         Optional<User> userOpt = userRepository.findById(userId);
         if (!userOpt.isPresent())  {
             throw new UsernameNotFoundException("User not found");
@@ -68,5 +69,9 @@ public class UserService implements UserDetailsService {
         return (dto.getFirstName() != null) ||
             (dto.getLastName() != null) ||
             (dto.getProfilePictureUrl() != null);
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
     }
 }

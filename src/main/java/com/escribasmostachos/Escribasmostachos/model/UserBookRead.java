@@ -41,15 +41,20 @@ public class UserBookRead {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 1, nullable = false)
-    private ReadStatus status = ReadStatus.R;
+    private ReadStatus status;
 
-    private LocalDate readingStartDate = LocalDate.now();
+    private LocalDate readingStartDate;
 
     private LocalDate readingEndDate;
 
     public UserBookRead(User user, Book book) {
         this.user = user;
         this.book = book;
+    }
+
+    public void markBookAsReading(){
+        this.status = ReadStatus.R;
+        this.readingStartDate = LocalDate.now();
     }
 
     public void markBookAsRead(){

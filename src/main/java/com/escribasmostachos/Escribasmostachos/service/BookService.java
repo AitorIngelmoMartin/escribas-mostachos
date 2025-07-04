@@ -79,5 +79,17 @@ public class BookService {
             (dto.getAuthor() != null) ||
             (dto.getCoverUrl() != null);
     }
+
+    public Book getBookByIsbn(String isbn){
+        Optional<Book> bookOpt = bookRepository.findByIsbn(isbn);
+        if (!bookOpt.isPresent())  {
+            throw new ResourceDontExistsOnDatabaseException("No book found on database with ISBN: " + isbn);
+        }
+        return bookOpt.get();
+    }
+
+    public void save(Book book) {
+        bookRepository.save(book);
+    }
 }
 

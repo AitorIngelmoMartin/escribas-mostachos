@@ -57,7 +57,7 @@ public class User implements UserDetails {
 
     private Integer booksReadCount = 0;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserBookRead> currentBooks;
 
     private LocalDate membershipDate;
@@ -95,6 +95,15 @@ public class User implements UserDetails {
         }
         dto.setMembershipDate(this.membershipDate);
         return dto;
+    }
+
+    public void addCurrentBookRead(UserBookRead reading) {
+        currentBooks.add(reading);
+        reading.setUser(this);
+    }
+
+    public void removeCurrentBookRead(UserBookRead reading) {
+        currentBooks.remove(reading);
     }
 
     public void updatePropertiesFromDto(ProfileUpdateDTO dto) {

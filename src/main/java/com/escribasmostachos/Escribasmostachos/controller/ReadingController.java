@@ -31,7 +31,16 @@ public class ReadingController {
         this.readingService = readingService;
     }
 
-    @PostMapping
+    @PostMapping("/start")
+    public ResponseEntity<ApiResponseDTO<Void>> addCurrentBook(@Valid @RequestBody BookReadingDTO dto, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        
+        readingService.addCurrentBook(dto, user.getId());
+
+        return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, "Read successfully registered"));
+    }
+
+    @PostMapping("/complete")
     public ResponseEntity<ApiResponseDTO<Void>> markBookAsRead(@Valid @RequestBody BookReadingDTO dto, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         

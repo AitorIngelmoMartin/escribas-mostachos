@@ -1,6 +1,7 @@
 package com.escribasmostachos.Escribasmostachos.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,8 @@ import com.escribasmostachos.Escribasmostachos.model.UserBookRead;
 @Repository
 public interface UserBookReadRepository extends JpaRepository<UserBookRead, Long>{
     boolean existsByUserAndBook(User user, Book book);
+    
+    Optional<UserBookRead> findByUserIdAndBookId(Long userId, Long bookId);
 
     List<UserBookRead> findByUserId(Long userId);
 }
