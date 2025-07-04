@@ -1,6 +1,5 @@
 package com.escribasmostachos.Escribasmostachos.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,7 +13,6 @@ import com.escribasmostachos.Escribasmostachos.dto.BookReadingDTO;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceAlreadyExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceDontExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.Book;
-import com.escribasmostachos.Escribasmostachos.model.ReadStatus;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.model.UserBookRead;
 import com.escribasmostachos.Escribasmostachos.repository.BookRepository;
