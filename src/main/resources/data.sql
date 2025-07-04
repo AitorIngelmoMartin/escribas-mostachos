@@ -16,6 +16,6 @@ INSERT INTO books (isbn, title, author, cover_url, updated_by) VALUES
 ('9788417347468', 'Crónica de una Muerte Anunciada', 'Gabriel García Márquez', 'https://example.com/cronica.jpg', 'user2'),
 ('9788417347314', 'La Tía Julia y el Escribidor', 'Mario Vargas Llosa', 'https://example.com/julia.jpg', 'editor'),
 ('9788466659758', 'El Aleph', 'Jorge Luis Borges', 'https://example.com/aleph.jpg', 'admin'),
-('9788408305910', 'Aura', 'Carlos Fuentes', 'https://example.com/aura.jpg', 'user1'),
+('9788416029747', 'Aura', 'Carlos Fuentes', 'https://example.com/aura.jpg', 'user1'),
 ('9788408302513', 'Los de Abajo', 'Mariano Azuela', 'https://example.com/abajo.jpg', 'user2'),
 ('9788411002189', 'La Casa de los Espíritus', 'Isabel Allende', 'https://example.com/espiritus.jpg', 'admin');
