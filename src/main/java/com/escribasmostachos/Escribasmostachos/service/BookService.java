@@ -2,6 +2,7 @@ package com.escribasmostachos.Escribasmostachos.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.validator.routines.ISBNValidator;
 import org.springframework.data.domain.PageRequest;
@@ -30,19 +31,24 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
     
-    public List<Book> getBooks(int limit, int page) {
+    public List<BookDTO> getBooks(int limit, int page) {
         PageRequest pageable = PageRequest.of(page, limit);
-        return bookRepository.findAll(pageable).getContent();
+        List<Book> books = bookRepository.findAll(pageable).getContent();
+
+        return books.stream()
+                    .map(Book::toBookDto)
+                    .collect(Collectors.toList());
     }
 
-    public Book addBookToDatabase(BookDTO bookDto, String username) {
+    public BookDTO addBookToDatabase(BookDTO bookDto, String username) {
         if (bookRepository.findByIsbn(bookDto.getIsbn()).isPresent()) {
             throw new ResourceAlreadyExistsOnDatabaseException("A book with ISBN: " + bookDto.getIsbn() + " already exists");
         }
 
         Book newBook = new Book().fromDto(bookDto);
         newBook.setUpdatedBy(username);
-        return bookRepository.save(newBook);
+        bookRepository.save(newBook);
+        return newBook.toBookDto();
     }
 
     @Transactional

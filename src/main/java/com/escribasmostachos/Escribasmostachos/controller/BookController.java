@@ -33,7 +33,7 @@ public class BookController {
     }
     
     @GetMapping
-    public ResponseEntity<ApiResponseDto<List<Book>>> getBooks(
+    public ResponseEntity<ApiResponseDto<List<BookDTO>>> getBooks(
         @RequestParam(defaultValue = "10") int limit,
         @RequestParam(defaultValue = "0") int page) {
         List<Integer> allowedLimits = List.of(10, 25, 50);
@@ -51,16 +51,16 @@ public class BookController {
                 "Invalid 'page' value. The value must be greater than or equal to zero."
             ));
         }
-        List<Book> books = bookService.getBooks(limit, page);
-        return ResponseEntity.ok(new ApiResponseDto<List<Book>>(HttpStatus.OK, "Books retrieved successfully", books));
+        List<BookDTO> books = bookService.getBooks(limit, page);
+        return ResponseEntity.ok(new ApiResponseDto<List<BookDTO>>(HttpStatus.OK, "Books retrieved successfully", books));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponseDto<Book>> registryBook(@Valid @RequestBody BookDTO bookDto, Authentication authentication) {
+    public ResponseEntity<ApiResponseDto<BookDTO>> registryBook(@Valid @RequestBody BookDTO bookDto, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
 
-        Book createdBook = bookService.addBookToDatabase(bookDto, user.getUsername());
-        return ResponseEntity.ok(new ApiResponseDto<Book>(HttpStatus.OK, "Book created successfully", createdBook));
+        BookDTO createdBook = bookService.addBookToDatabase(bookDto, user.getUsername());
+        return ResponseEntity.ok(new ApiResponseDto<BookDTO>(HttpStatus.OK, "Book created successfully", createdBook));
     }
 
     @PatchMapping
