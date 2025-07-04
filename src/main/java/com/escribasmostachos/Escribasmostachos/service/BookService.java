@@ -73,7 +73,7 @@ public class BookService {
         return true;
     }
 
-    public boolean haveSomethingToUpdate(BookUpdateDTO dto) {
+    private boolean haveSomethingToUpdate(BookUpdateDTO dto) {
         return (dto.getNewIsbn() != null) ||
             (dto.getTitle() != null) ||
             (dto.getAuthor() != null) ||
