@@ -1,0 +1,19 @@
+version = 1
+url = "http://127.0.0.1:8080/readings/start"
+method = "POST"
+
+[body]
+type = "raw"
+format = "json"
+body = '''
+{
+  "isbn": "9788410163768"
+}'''
+
+[headers]
+Content-Type = "application/json"
+Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwidXNlcklkIjoxLCJpYXQiOjE3NTE2NDg4NzIsImV4cCI6MTc1MTY1MjQ3Mn0.SwqsEEpR-y-bulduLDuEXOp8iBoJKt69CTR3WS4bc9Y"
+
+[variables]
+
+[inactive-params]
