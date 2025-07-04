@@ -7,16 +7,16 @@ type = "raw"
 format = "json"
 body = '''
 {
-  "oldIsbn": "9788441532106",
-  "newIsbn": "9788408304753",
+  "bookIsbn": "9788411002189",
+  "newIsbn": "9788416029778",
   "title": "Effective Java",
   "author": "Joshua Bloch",
   "coverUrl": "https://example.com/covers/effective-java.jpg"
 }'''
 
 [headers]
-Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwiaWQiOjEsImlhdCI6MTc1MTIwNjk5NywiZXhwIjoxNzUxMjEwNTk3fQ.03qKR_XJjnali1LbUW85mrSGs_Z1jtgGL6LHhUIhnsE"
 Content-Type = "application/json"
+Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8xIiwiZW1haWwiOiJhQGIuY29tIiwidXNlcklkIjoxLCJyb2xlIjoiUk9MRV9NT0RFUkFUT1IiLCJpYXQiOjE3NTE2NTI2MjMsImV4cCI6MTc1MTY1NjIyM30.gG_ahnxWslCsxvUxN5WwRAYJWVvQ80fQmpJNnmr7kR0"
 
 [variables]
 
