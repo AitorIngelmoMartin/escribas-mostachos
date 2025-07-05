@@ -31,6 +31,29 @@ public class BookController {
     public BookController(BookService bookService) {
         this.bookService = bookService;
     }
+
+    @GetMapping("/isbn/{isbn}")
+    public ResponseEntity<ApiResponseDTO<List<BookDTO>>> getBookById(
+        @RequestParam(defaultValue = "10") int limit,
+        @RequestParam(defaultValue = "0") int page) {
+        List<Integer> allowedLimits = List.of(10, 25, 50);
+
+        if (!allowedLimits.contains(limit)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDTO<>(
+                HttpStatus.BAD_REQUEST,
+                "Invalid 'limit' value. Allowed values are 10, 25, or 50."
+            ));
+        }
+        
+        if (page < 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDTO<>(
+                HttpStatus.BAD_REQUEST,
+                "Invalid 'page' value. The value must be greater than or equal to zero."
+            ));
+        }
+        List<BookDTO> books = bookService.getBooks(limit, page);
+        return ResponseEntity.ok(new ApiResponseDTO<List<BookDTO>>(HttpStatus.OK, "Books retrieved successfully", books));
+    }
     
     @GetMapping
     public ResponseEntity<ApiResponseDTO<List<BookDTO>>> getBooks(
@@ -66,13 +89,14 @@ public class BookController {
 
     @PatchMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-    public ResponseEntity<ApiResponseDTO<Void>> updateBookInfo(@Valid @RequestBody BookUpdateDTO bookUpdateDto, Authentication authentication) {
+    public ResponseEntity<?> updateBookInfo(@Valid @RequestBody BookUpdateDTO bookUpdateDto, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         boolean somethingWasUpdated = bookService.updateBookFromDatabase(bookUpdateDto, user.getUsername());
 
-        String message = somethingWasUpdated
-            ? "book information successfully updated"
-            : "nothing to update";
-        return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, message));
+        if (!somethingWasUpdated) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, "book information successfully updated"));
     }
 }
