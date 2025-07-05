@@ -20,6 +20,7 @@ import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
 import com.escribasmostachos.Escribasmostachos.dto.BookUpdateDTO;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.BookService;
+import com.escribasmostachos.Escribasmostachos.validations.IsbnValid;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -40,6 +41,16 @@ public class BookController {
         Long bookId) {
 
         BookDTO book = bookService.getBookById(bookId);
+        return ResponseEntity.ok(new ApiResponseDTO<BookDTO>(HttpStatus.OK, "Books retrieved successfully", book));
+    }
+
+    @GetMapping("/isbn/{isbn}")
+    public ResponseEntity<ApiResponseDTO<BookDTO>> getBookByIsbn(
+        @PathVariable
+        @IsbnValid
+        String isbn) {
+
+        BookDTO book = bookService.getBookByIsbn(isbn).toBookDto();
         return ResponseEntity.ok(new ApiResponseDTO<BookDTO>(HttpStatus.OK, "Books retrieved successfully", book));
     }
 
