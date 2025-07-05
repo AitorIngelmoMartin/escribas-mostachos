@@ -62,12 +62,12 @@ public class BookService {
             throw new InvalidIsbnException(bookUpdateDto.getNewIsbn() + " is an invalid ISBN");
         }
 
-        Optional<Book> bookReadedFromDatabase = bookRepository.findByIsbn(bookUpdateDto.getBookIsbn());
-        if (!bookReadedFromDatabase.isPresent()) {
+        Optional<Book> bookReadFromDatabase = bookRepository.findByIsbn(bookUpdateDto.getBookIsbn());
+        if (!bookReadFromDatabase.isPresent()) {
             throw new ResourceDontExistsOnDatabaseException("A book with ISBN: " + bookUpdateDto.getBookIsbn() + " don't exists");
         }
         
-        Book oldBookInfo = bookReadedFromDatabase.get();
+        Book oldBookInfo = bookReadFromDatabase.get();
         oldBookInfo.updatePropertiesFromDto(bookUpdateDto);
         oldBookInfo.setUpdatedBy(username);
         return true;
