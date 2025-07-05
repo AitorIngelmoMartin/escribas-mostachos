@@ -71,22 +71,20 @@ public class ReadingService {
         log.debug("BookId: " + bookReadByUser.getId());
         Optional<UserBookRead> bookReadingAlreadyRegistered = userBookReadRepository.findByUserIdAndBookId(userThatReadTheBook.getId(), bookReadByUser.getId());
 
+        UserBookRead userBookRead;
         if(bookReadingAlreadyRegistered.isPresent()){
-            UserBookRead userBookRead = bookReadingAlreadyRegistered.get();
+            userBookRead = bookReadingAlreadyRegistered.get();
             log.debug("Read already saved on DDBB");
             if (userBookRead.getStatus() == ReadStatus.F){
                 throw new ResourceAlreadyExistsOnDatabaseException("User already registered this read");
             }
-            userBookRead.markBookAsRead();
-            userBookReadRepository.save(userBookRead);
-            updateUserReadBookInfo(userThatReadTheBook, bookReadByUser, userBookRead);
         }else{
             log.debug("Creating new book read registry");
-            UserBookRead userBookRead = new UserBookRead(userThatReadTheBook, bookReadByUser);
-            userBookRead.markBookAsRead();
-            userBookReadRepository.save(userBookRead);
-            updateUserReadBookInfo(userThatReadTheBook, bookReadByUser, userBookRead);
+            userBookRead = new UserBookRead(userThatReadTheBook, bookReadByUser);
         }
+        userBookRead.markBookAsRead();
+        userBookReadRepository.save(userBookRead);
+        updateUserReadBookInfo(userThatReadTheBook, bookReadByUser, userBookRead);
     }
     
     private void updateUserReadBookInfo(User user, Book book, UserBookRead userBookRead){
