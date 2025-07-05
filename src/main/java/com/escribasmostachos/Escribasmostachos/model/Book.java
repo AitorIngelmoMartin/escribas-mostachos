@@ -67,6 +67,7 @@ public class Book {
 
     public BookDTO toBookDto() {
         BookDTO dto = new BookDTO();
+        dto.setBookId(this.id);
         dto.setIsbn(this.isbn);
         dto.setTitle(this.title);
         dto.setAuthor(this.author);
