@@ -81,11 +81,8 @@ public class BookService {
     }
 
     public Book getBookByIsbn(String isbn){
-        Optional<Book> bookOpt = bookRepository.findByIsbn(isbn);
-        if (!bookOpt.isPresent())  {
-            throw new ResourceDontExistsOnDatabaseException("No book found on database with ISBN: " + isbn);
-        }
-        return bookOpt.get();
+        return bookRepository.findByIsbn(isbn)
+                         .orElseThrow(() -> new ResourceDontExistsOnDatabaseException("No book found on database with ISBN: " + isbn));
     }
     
     public BookDTO getBookById(Long bookId) {
