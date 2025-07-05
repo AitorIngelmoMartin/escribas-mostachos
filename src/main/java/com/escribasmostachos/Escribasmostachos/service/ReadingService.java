@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,9 +102,10 @@ public class ReadingService {
     }
 
     @Transactional(readOnly = true)
-    public List<BookDTO> getBooksReadByUser(Long userId) {
-        log.info("Getting reads for user with id: " + userId);
-        List<UserBookRead> userReads = userBookReadRepository.findByUserId(userId);
+    public List<BookDTO> getBooksReadByUser(Long userId, int limit, int page) {
+        log.info("Getting " +limit+ " reads from page " + page + " for user with id: " + userId);
+        PageRequest pageable = PageRequest.of(page, limit);
+        List<UserBookRead> userReads = userBookReadRepository.findByUserId(userId, pageable).getContent();
         return userReads.stream()
             .map(userBookRead -> userBookRead.getBook().toBookDto())
             .collect(Collectors.toList());
