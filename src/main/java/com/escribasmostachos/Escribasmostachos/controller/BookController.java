@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.BookService;
 
 import jakarta.validation.Valid;
-
+import jakarta.validation.constraints.Min;
 @RestController
 @RequestMapping("/books")
 public class BookController {
@@ -32,29 +33,16 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping("/isbn/{isbn}")
-    public ResponseEntity<ApiResponseDTO<List<BookDTO>>> getBookById(
-        @RequestParam(defaultValue = "10") int limit,
-        @RequestParam(defaultValue = "0") int page) {
-        List<Integer> allowedLimits = List.of(10, 25, 50);
+    @GetMapping("/isbn/{bookId}")
+    public ResponseEntity<ApiResponseDTO<BookDTO>> getBookById(
+        @PathVariable
+        @Min(value = 1, message = "ID must be zero or positive")
+        Long bookId) {
 
-        if (!allowedLimits.contains(limit)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDTO<>(
-                HttpStatus.BAD_REQUEST,
-                "Invalid 'limit' value. Allowed values are 10, 25, or 50."
-            ));
-        }
-        
-        if (page < 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDTO<>(
-                HttpStatus.BAD_REQUEST,
-                "Invalid 'page' value. The value must be greater than or equal to zero."
-            ));
-        }
-        List<BookDTO> books = bookService.getBooks(limit, page);
-        return ResponseEntity.ok(new ApiResponseDTO<List<BookDTO>>(HttpStatus.OK, "Books retrieved successfully", books));
+        BookDTO book = bookService.getBookById(bookId);
+        return ResponseEntity.ok(new ApiResponseDTO<BookDTO>(HttpStatus.OK, "Books retrieved successfully", book));
     }
-    
+
     @GetMapping
     public ResponseEntity<ApiResponseDTO<List<BookDTO>>> getBooks(
         @RequestParam(defaultValue = "10") int limit,
@@ -67,7 +55,7 @@ public class BookController {
                 "Invalid 'limit' value. Allowed values are 10, 25, or 50."
             ));
         }
-        
+
         if (page < 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDTO<>(
                 HttpStatus.BAD_REQUEST,

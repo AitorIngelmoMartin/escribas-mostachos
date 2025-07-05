@@ -87,6 +87,12 @@ public class BookService {
         }
         return bookOpt.get();
     }
+    
+    public BookDTO getBookById(Long bookId) {
+        return bookRepository.findById(bookId)
+                         .map(Book::toBookDto)
+                         .orElseThrow(() -> new ResourceDontExistsOnDatabaseException("No book found on database with ID: " + bookId));
+    }
 
     public void save(Book book) {
         bookRepository.save(book);
