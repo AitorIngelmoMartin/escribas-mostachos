@@ -71,6 +71,7 @@ public class Book {
         dto.setTitle(this.title);
         dto.setAuthor(this.author);
         dto.setCoverUrl(this.coverUrl);
+        dto.setUpdatedBy(this.updatedBy);
         return dto;
     }
 }

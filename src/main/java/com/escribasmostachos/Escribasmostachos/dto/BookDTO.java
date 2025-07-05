@@ -24,4 +24,6 @@ public class BookDTO {
     
     @Pattern(regexp = "^(https?://.*)?$", message = "Cover URL must be a valid URL")
     private String coverUrl;
+
+    private String updatedBy;
 }
