@@ -42,17 +42,16 @@ public class AuthService {
     public void register(RegisterRequestDTO registerRequest) {
         log.info("Starting register operation");
 
-        Optional<User> existingUser = userRepository.findByEmailOrUsername(registerRequest.getEmail(), registerRequest.getUsername());
+        Optional<User> optExistingUser = userRepository.findByEmailOrUsername(registerRequest.getEmail(), registerRequest.getUsername());
 
-        if (existingUser.isPresent()) {
-            String existingEmail = existingUser.get().getEmail();
-            String existingUsername = existingUser.get().getUsername();
+        if (optExistingUser.isPresent()) {
+            User existingUser = optExistingUser.get();
 
-            if (existingEmail.equals(registerRequest.getEmail())) {
+            if (existingUser.getEmail().equals(registerRequest.getEmail())) {
                 throw new ResourceAlreadyExistsOnDatabaseException("Email already in use");
             }
 
-            if (existingUsername.equals(registerRequest.getUsername())) {
+            if (existingUser.getUsername().equals(registerRequest.getUsername())) {
                 throw new ResourceAlreadyExistsOnDatabaseException("Username already taken");
             }
         }
