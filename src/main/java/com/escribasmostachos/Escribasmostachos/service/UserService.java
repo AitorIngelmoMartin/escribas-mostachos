@@ -1,7 +1,5 @@
 package com.escribasmostachos.Escribasmostachos.service;
 
-import java.util.Optional;
-
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -28,20 +26,12 @@ public class UserService implements UserDetailsService {
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("Finding user with username: " +  username);
-        Optional<User> userOpt = userRepository.findByUsername(username);
-        if (!userOpt.isPresent())  {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return userOpt.get();
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     public User getUserById(Long userId){
         log.info("Finding user with userId: " + userId);
-        Optional<User> userOpt = userRepository.findById(userId);
-        if (!userOpt.isPresent())  {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return userOpt.get();
+        return userRepository.findById(userId).orElseThrow(() ->new UsernameNotFoundException("User not found"));
     }
 
     public UserProfileDTO getProfileByUserId(Long userId){

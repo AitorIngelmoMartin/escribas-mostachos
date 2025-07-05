@@ -1,7 +1,6 @@
 package com.escribasmostachos.Escribasmostachos.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.validator.routines.ISBNValidator;
@@ -62,12 +61,10 @@ public class BookService {
             throw new InvalidIsbnException(bookUpdateDto.getNewIsbn() + " is an invalid ISBN");
         }
 
-        Optional<Book> bookReadFromDatabase = bookRepository.findByIsbn(bookUpdateDto.getBookIsbn());
-        if (!bookReadFromDatabase.isPresent()) {
-            throw new ResourceDontExistsOnDatabaseException("A book with ISBN: " + bookUpdateDto.getBookIsbn() + " don't exists");
-        }
-        
-        Book oldBookInfo = bookReadFromDatabase.get();
+        Book oldBookInfo = bookRepository.findByIsbn(bookUpdateDto.getBookIsbn())
+                                        .orElseThrow(() -> new ResourceDontExistsOnDatabaseException(
+                                            "A book with ISBN: " + bookUpdateDto.getBookIsbn() + " don't exists"
+                                        ));
         oldBookInfo.updatePropertiesFromDto(bookUpdateDto);
         oldBookInfo.setUpdatedBy(username);
         return true;
