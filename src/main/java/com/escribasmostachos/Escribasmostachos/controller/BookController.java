@@ -34,7 +34,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping("/isbn/{bookId}")
+    @GetMapping("/id/{bookId}")
     public ResponseEntity<ApiResponseDTO<BookDTO>> getBookById(
         @PathVariable
         @Min(value = 1, message = "ID must be zero or positive")
