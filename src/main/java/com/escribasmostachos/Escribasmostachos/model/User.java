@@ -110,12 +110,7 @@ public class User implements UserDetails {
                 .collect(Collectors.toList());
             dto.setCurrentBooks(currentBookDTOs);
         }
-        if(this.readingMeetups != null){
-            dto.setReadingMeetups(this.readingMeetups.stream()
-                                    .filter(meetup -> meetup.getStatus() == MeetupStatus.ACTIVE)
-                                    .map(ReadingMeetup::toReadingMeetupDTO)
-                                    .collect(Collectors.toSet()));
-        }
+
         dto.setMembershipDate(this.membershipDate);
         return dto;
     }
