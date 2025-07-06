@@ -18,7 +18,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,9 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = {"participants", "creator"})
-@Table(name = "reading_meetups", uniqueConstraints = {
-    @UniqueConstraint(name = "UQ_CreatorBookActiveMeetup", columnNames = {"creator_user_id", "book_id", "status"})
-})
+@Table(name = "reading_meetups")
 public class ReadingMeetup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
