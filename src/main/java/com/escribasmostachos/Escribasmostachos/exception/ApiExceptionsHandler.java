@@ -33,8 +33,8 @@ public class ApiExceptionsHandler {
     @ExceptionHandler(ResourceDontExistsOnDatabaseException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleResourceDontExistsOnDatabaseException(ResourceDontExistsOnDatabaseException ex) {
         log.error("Resource don't exists: " + ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiResponseDTO<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponseDTO<Void>(HttpStatus.NOT_FOUND, ex.getMessage()));
     }
 
     @ExceptionHandler(InvalidIsbnException.class)
