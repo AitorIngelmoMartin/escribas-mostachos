@@ -83,7 +83,7 @@ public class BookController {
         User user = (User) authentication.getPrincipal();
 
         BookDTO createdBook = bookService.addBookToDatabase(bookDto, user.getUsername());
-        return ResponseEntity.ok(new ApiResponseDTO<BookDTO>(HttpStatus.OK, "Book created successfully", createdBook));
+        return ResponseEntity.ok(new ApiResponseDTO<BookDTO>(HttpStatus.CREATED, "Book created successfully", createdBook));
     }
 
     @PatchMapping
