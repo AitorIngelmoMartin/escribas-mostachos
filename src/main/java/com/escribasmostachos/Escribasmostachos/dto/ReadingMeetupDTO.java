@@ -11,6 +11,8 @@ import lombok.Data;
 @Data
 public class ReadingMeetupDTO {
     
+    private String publicId;
+
     private String title;
 
     private String creator;

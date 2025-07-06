@@ -3,9 +3,6 @@ package com.escribasmostachos.Escribasmostachos.model;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.escribasmostachos.Escribasmostachos.dto.ReadingMeetupDTO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -82,27 +79,5 @@ public class ReadingMeetup {
         this.creator = creator;
         this.book = book;
         this.setStatus(MeetupStatus.DRAFT);
-    }
-
-    public ReadingMeetupDTO toReadingMeetupDTO(){
-        ReadingMeetupDTO readingMeetupDTO = new ReadingMeetupDTO();
-        readingMeetupDTO.setTitle(this.title);
-        readingMeetupDTO.setCreator(this.creator.getUsername());
-        readingMeetupDTO.setBook(this.book.toBookDto());
-        readingMeetupDTO.setStatus(this.status);
-        readingMeetupDTO.setParticipants(this.participants.stream()
-                                            .map(User::getUsername)
-                                            .collect(Collectors.toSet()));
-
-        
-        if (this.meetupStartDate != null){
-            readingMeetupDTO.setMeetupStartDate(meetupStartDate);
-        }
-
-        if (this.meetupEndDate != null){
-            readingMeetupDTO.setMeetupEndDate(this.meetupEndDate);
-        }
-
-        return readingMeetupDTO;
     }
 }

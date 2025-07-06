@@ -7,6 +7,7 @@ import com.escribasmostachos.Escribasmostachos.model.Book;
 import com.escribasmostachos.Escribasmostachos.model.MeetupStatus;
 import com.escribasmostachos.Escribasmostachos.model.ReadingMeetup;
 import com.escribasmostachos.Escribasmostachos.repository.ReadingMeetupRepository;
+import com.escribasmostachos.Escribasmostachos.service.mapper.ReadingMeetupMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,23 +26,28 @@ public class ReadingMeetupService {
     private final ReadingMeetupRepository meetupRepository;
     private final UserService userService;
     private final BookService bookService;
+    private final ReadingMeetupMapper meetupMapper;
 
     public ReadingMeetupService(ReadingMeetupRepository meetupRepository, 
                                 UserService userService,
-                                BookService bookService) {
+                                BookService bookService,
+                                ReadingMeetupMapper meetupMapper) {
         this.meetupRepository = meetupRepository;
         this.userService = userService;
         this.bookService = bookService;
+        this.meetupMapper = meetupMapper;
     }
 
     @Transactional
-    public ReadingMeetup createMeetup(Long creatorId, CreateMeetupDTO createMeetupDTO) {
+    public ReadingMeetupDTO createMeetup(Long creatorId, CreateMeetupDTO createMeetupDTO) {
         User creator = userService.getUserById(creatorId);
         Book book = bookService.getBookById(createMeetupDTO.getBookId());
 
         ReadingMeetup newMeetup = new ReadingMeetup(createMeetupDTO.getTitle(), creator, book);
         newMeetup.addParticipant(creator);
-        return meetupRepository.save(newMeetup);
+        meetupRepository.save(newMeetup);
+
+        return meetupMapper.toReadingMeetupDTO(newMeetup);
     }
 
     @Transactional(readOnly = true)
@@ -71,7 +77,7 @@ public class ReadingMeetupService {
         }
 
         return readingMeetups.getContent().stream()
-                    .map(ReadingMeetup::toReadingMeetupDTO)
+                    .map(meetupMapper::toReadingMeetupDTO)
                     .collect(Collectors.toList());
     }
 }
