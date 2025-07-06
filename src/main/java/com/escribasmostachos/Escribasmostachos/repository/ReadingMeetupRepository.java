@@ -11,4 +11,6 @@ import com.escribasmostachos.Escribasmostachos.model.ReadingMeetup;
 @Repository
 public interface ReadingMeetupRepository extends JpaRepository<ReadingMeetup, Long>{
     Page<ReadingMeetup> findAllByStatus(MeetupStatus status, Pageable pageable);
+    Page<ReadingMeetup> findAllByCreatorId(Long creatorId, Pageable pageable);
+    Page<ReadingMeetup> findAllByStatusAndCreatorId(MeetupStatus status, Long creatorId, Pageable pageable);
 }

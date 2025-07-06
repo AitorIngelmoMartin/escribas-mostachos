@@ -44,10 +44,17 @@ public class ReadingMeetupService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReadingMeetupDTO> getMeetups(int limit, int page, MeetupStatus status) {
+    public List<ReadingMeetupDTO> getMeetups(Long userId, int limit, int page, MeetupStatus status) {
         PageRequest pageable = PageRequest.of(page, limit);
         List<ReadingMeetup> readingMeetups;
-        if (status != null) {
+
+        if (status != null && userId != null) {
+            log.debug("Getting reading meetups with status: "+ status + " created by user " + userId);
+            readingMeetups = meetupRepository.findAllByStatusAndCreatorId(status, userId, pageable).getContent();
+        } else if (userId != null) {
+            log.debug("Getting all type of meetups created by user: " + userId);
+            readingMeetups = meetupRepository.findAllByCreatorId(userId, pageable).getContent();
+        } else if (status != null) {
             log.debug("Getting reading meetups with status: "+ status);
             readingMeetups = meetupRepository.findAllByStatus(status, pageable).getContent();
         } else {

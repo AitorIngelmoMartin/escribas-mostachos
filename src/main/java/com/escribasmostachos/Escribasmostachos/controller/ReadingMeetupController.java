@@ -35,7 +35,9 @@ public class ReadingMeetupController {
     public ResponseEntity<ApiResponseDTO<List<ReadingMeetupDTO>>> getMeetups(
         @RequestParam(defaultValue = "10") int limit,
         @RequestParam(defaultValue = "0") int page,
-         @RequestParam(required = false) MeetupStatus status) {
+        @RequestParam(required = false) MeetupStatus status,
+        @RequestParam(required = false, defaultValue = "false") boolean ownOnly,
+        Authentication authentication) {
         List<Integer> allowedLimits = List.of(10, 25, 50);
 
         if (!allowedLimits.contains(limit)) {
@@ -52,7 +54,14 @@ public class ReadingMeetupController {
             ));
         }
 
-        List<ReadingMeetupDTO> readingMeetup = readingMeetupService.getMeetups(limit, page, status);
+        
+        Long userId = null;
+        if (ownOnly) {
+            User user = (User) authentication.getPrincipal();
+            userId = user.getId();
+        }
+
+        List<ReadingMeetupDTO> readingMeetup = readingMeetupService.getMeetups(userId, limit, page, status);
         return ResponseEntity.ok(new ApiResponseDTO<List<ReadingMeetupDTO>>(HttpStatus.OK, "Reading meetup draft created successfully", readingMeetup));
     }
 
