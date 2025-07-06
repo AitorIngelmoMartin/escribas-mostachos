@@ -51,6 +51,13 @@ public class ApiExceptionsHandler {
                 .body(new ApiResponseDTO<Void>(HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
 
+    @ExceptionHandler(UnauthorizedUserActionException.class)
+    public ResponseEntity<ApiResponseDTO<Void>> handleUnauthorizedUserActionException(UnauthorizedUserActionException ex) {
+        log.warn("Unauthorized user action: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ApiResponseDTO<Void>(HttpStatus.FORBIDDEN, ex.getMessage()));
+    }
+    
     // API requests exceptions
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleBadCredentialsException(BadCredentialsException ex) {
