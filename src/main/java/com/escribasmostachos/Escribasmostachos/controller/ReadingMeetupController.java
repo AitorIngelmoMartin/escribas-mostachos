@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDTO;
 import com.escribasmostachos.Escribasmostachos.dto.CreateMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.dto.ReadingMeetupDTO;
+import com.escribasmostachos.Escribasmostachos.model.MeetupStatus;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.ReadingMeetupService;
 
@@ -33,7 +34,8 @@ public class ReadingMeetupController {
     @GetMapping
     public ResponseEntity<ApiResponseDTO<List<ReadingMeetupDTO>>> getMeetups(
         @RequestParam(defaultValue = "10") int limit,
-        @RequestParam(defaultValue = "0") int page) {
+        @RequestParam(defaultValue = "0") int page,
+         @RequestParam(required = false) MeetupStatus status) {
         List<Integer> allowedLimits = List.of(10, 25, 50);
 
         if (!allowedLimits.contains(limit)) {
@@ -50,7 +52,7 @@ public class ReadingMeetupController {
             ));
         }
 
-        List<ReadingMeetupDTO> readingMeetup = readingMeetupService.getMeetups(limit, page);
+        List<ReadingMeetupDTO> readingMeetup = readingMeetupService.getMeetups(limit, page, status);
         return ResponseEntity.ok(new ApiResponseDTO<List<ReadingMeetupDTO>>(HttpStatus.OK, "Reading meetup draft created successfully", readingMeetup));
     }
 

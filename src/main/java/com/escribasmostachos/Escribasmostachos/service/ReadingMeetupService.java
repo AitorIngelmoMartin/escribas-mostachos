@@ -4,6 +4,7 @@ import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.dto.CreateMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.dto.ReadingMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.model.Book;
+import com.escribasmostachos.Escribasmostachos.model.MeetupStatus;
 import com.escribasmostachos.Escribasmostachos.model.ReadingMeetup;
 import com.escribasmostachos.Escribasmostachos.repository.ReadingMeetupRepository;
 
@@ -43,10 +44,17 @@ public class ReadingMeetupService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReadingMeetupDTO> getMeetups(int limit, int page) {
+    public List<ReadingMeetupDTO> getMeetups(int limit, int page, MeetupStatus status) {
         PageRequest pageable = PageRequest.of(page, limit);
-        List<ReadingMeetup> readingMeetups = meetupRepository.findAll(pageable).getContent();
-        
+        List<ReadingMeetup> readingMeetups;
+        if (status != null) {
+            log.debug("Getting reading meetups with status: "+ status);
+            readingMeetups = meetupRepository.findAllByStatus(status, pageable).getContent();
+        } else {
+            log.debug("Getting all type of meetups");
+            readingMeetups = meetupRepository.findAll(pageable).getContent();
+        }
+
         return readingMeetups.stream()
                     .map(ReadingMeetup::toReadingMeetupDTO)
                     .collect(Collectors.toList());
