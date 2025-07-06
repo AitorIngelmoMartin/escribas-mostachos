@@ -83,7 +83,7 @@ public class ReadingMeetupService {
     }
 
     @Transactional
-    public void addUserToMeetup(Long readingMeetupId, Long userId) {
+    public void joinToMeetup(Long readingMeetupId, Long userId) {
         ReadingMeetup readingMeetupToJoin = findReadingMeetupById(readingMeetupId);
         User userToAdd = userService.getUserById(userId);
         readingMeetupToJoin.addParticipant(userToAdd);

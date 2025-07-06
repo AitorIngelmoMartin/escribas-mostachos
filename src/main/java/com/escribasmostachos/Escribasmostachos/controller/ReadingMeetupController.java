@@ -81,11 +81,11 @@ public class ReadingMeetupController {
     }
 
     @PostMapping("/{publicId}/join")
-    public ResponseEntity<ApiResponseDTO<Void>> addUserToMeetup(@PathVariable String publicId, Authentication authentication) {
+    public ResponseEntity<ApiResponseDTO<Void>> joinToMeetup(@PathVariable String publicId, Authentication authentication) {
         Long readingMeetupId = publicIdGenerator.decode(publicId);
         User user = (User) authentication.getPrincipal();
         
-        readingMeetupService.addUserToMeetup(readingMeetupId, user.getId());
+        readingMeetupService.joinToMeetup(readingMeetupId, user.getId());
 
         return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, "User added to reading meetup"));
     }
