@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.escribasmostachos.Escribasmostachos.dto.ReadingMeetupDTO;
+import com.escribasmostachos.Escribasmostachos.dto.meetups.ReadingMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.model.ReadingMeetup;
 import com.escribasmostachos.Escribasmostachos.utils.PublicIdGenerator;
 

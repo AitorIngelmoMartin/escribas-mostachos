@@ -1,4 +1,4 @@
-package com.escribasmostachos.Escribasmostachos.dto;
+package com.escribasmostachos.Escribasmostachos.dto.profiles;
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

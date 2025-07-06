@@ -9,8 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
-import com.escribasmostachos.Escribasmostachos.dto.BookReadingDTO;
+import com.escribasmostachos.Escribasmostachos.dto.books.BookDTO;
+import com.escribasmostachos.Escribasmostachos.dto.books.BookReadingDTO;
 import com.escribasmostachos.Escribasmostachos.exception.MaxCurrentBooksReachedException;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceAlreadyExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.Book;

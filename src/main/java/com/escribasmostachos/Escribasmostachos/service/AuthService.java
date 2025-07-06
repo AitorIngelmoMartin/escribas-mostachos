@@ -9,8 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Service;
 
-import com.escribasmostachos.Escribasmostachos.dto.LoginRequestDTO;
-import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDTO;
+import com.escribasmostachos.Escribasmostachos.dto.auth.LoginRequestDTO;
+import com.escribasmostachos.Escribasmostachos.dto.auth.RegisterRequestDTO;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceAlreadyExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.RoleType;
 import com.escribasmostachos.Escribasmostachos.model.User;

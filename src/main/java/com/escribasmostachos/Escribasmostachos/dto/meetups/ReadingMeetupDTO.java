@@ -1,9 +1,10 @@
-package com.escribasmostachos.Escribasmostachos.dto;
+package com.escribasmostachos.Escribasmostachos.dto.meetups;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.escribasmostachos.Escribasmostachos.dto.books.BookDTO;
 import com.escribasmostachos.Escribasmostachos.model.MeetupStatus;
 
 import lombok.Data;

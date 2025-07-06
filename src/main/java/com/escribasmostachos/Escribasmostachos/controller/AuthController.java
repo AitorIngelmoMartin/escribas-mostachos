@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDTO;
-import com.escribasmostachos.Escribasmostachos.dto.LoginRequestDTO;
-import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDTO;
+import com.escribasmostachos.Escribasmostachos.dto.auth.LoginRequestDTO;
+import com.escribasmostachos.Escribasmostachos.dto.auth.RegisterRequestDTO;
 import com.escribasmostachos.Escribasmostachos.service.AuthService;
 
 import jakarta.validation.Valid;

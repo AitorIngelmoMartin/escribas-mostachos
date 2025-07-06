@@ -1,8 +1,5 @@
 package com.escribasmostachos.Escribasmostachos.model;
 
-import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
-import com.escribasmostachos.Escribasmostachos.dto.BookUpdateDTO;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +12,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
+
+import com.escribasmostachos.Escribasmostachos.dto.books.BookDTO;
+import com.escribasmostachos.Escribasmostachos.dto.books.BookUpdateDTO;
 
 @Entity
 @Data

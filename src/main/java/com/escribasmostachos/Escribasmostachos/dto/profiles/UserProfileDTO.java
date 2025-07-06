@@ -1,7 +1,10 @@
-package com.escribasmostachos.Escribasmostachos.dto;
+package com.escribasmostachos.Escribasmostachos.dto.profiles;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import com.escribasmostachos.Escribasmostachos.dto.books.BookDTO;
+
 import lombok.Data;
 
 @Data

@@ -1,4 +1,4 @@
-package com.escribasmostachos.Escribasmostachos.dto;
+package com.escribasmostachos.Escribasmostachos.dto.books;
 
 import com.escribasmostachos.Escribasmostachos.validations.IsbnValid;
 

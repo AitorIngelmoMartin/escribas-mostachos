@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.Authentication;
 
 import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDTO;
-import com.escribasmostachos.Escribasmostachos.dto.BaseUserProfileDTO;
-import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDTO;
-import com.escribasmostachos.Escribasmostachos.dto.UserProfileDTO;
+import com.escribasmostachos.Escribasmostachos.dto.profiles.BaseUserProfileDTO;
+import com.escribasmostachos.Escribasmostachos.dto.profiles.ProfileUpdateDTO;
+import com.escribasmostachos.Escribasmostachos.dto.profiles.UserProfileDTO;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.UserService;
 

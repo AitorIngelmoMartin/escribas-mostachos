@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDTO;
-import com.escribasmostachos.Escribasmostachos.dto.CreateMeetupDTO;
-import com.escribasmostachos.Escribasmostachos.dto.ReadingMeetupDTO;
+import com.escribasmostachos.Escribasmostachos.dto.meetups.CreateMeetupDTO;
+import com.escribasmostachos.Escribasmostachos.dto.meetups.ReadingMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.model.MeetupStatus;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.ReadingMeetupService;

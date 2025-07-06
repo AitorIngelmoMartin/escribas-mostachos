@@ -1,4 +1,4 @@
-package com.escribasmostachos.Escribasmostachos.dto;
+package com.escribasmostachos.Escribasmostachos.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

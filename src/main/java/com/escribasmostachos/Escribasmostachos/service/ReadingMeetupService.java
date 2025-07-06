@@ -1,8 +1,8 @@
 package com.escribasmostachos.Escribasmostachos.service;
 
 import com.escribasmostachos.Escribasmostachos.model.User;
-import com.escribasmostachos.Escribasmostachos.dto.CreateMeetupDTO;
-import com.escribasmostachos.Escribasmostachos.dto.ReadingMeetupDTO;
+import com.escribasmostachos.Escribasmostachos.dto.meetups.CreateMeetupDTO;
+import com.escribasmostachos.Escribasmostachos.dto.meetups.ReadingMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceDontExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.Book;
 import com.escribasmostachos.Escribasmostachos.model.MeetupStatus;

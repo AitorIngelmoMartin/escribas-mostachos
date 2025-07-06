@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
-import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDTO;
-import com.escribasmostachos.Escribasmostachos.dto.PrivateUserProfileDTO;
-import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDTO;
-import com.escribasmostachos.Escribasmostachos.dto.UserProfileDTO;
+import com.escribasmostachos.Escribasmostachos.dto.auth.RegisterRequestDTO;
+import com.escribasmostachos.Escribasmostachos.dto.books.BookDTO;
+import com.escribasmostachos.Escribasmostachos.dto.profiles.PrivateUserProfileDTO;
+import com.escribasmostachos.Escribasmostachos.dto.profiles.ProfileUpdateDTO;
+import com.escribasmostachos.Escribasmostachos.dto.profiles.UserProfileDTO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

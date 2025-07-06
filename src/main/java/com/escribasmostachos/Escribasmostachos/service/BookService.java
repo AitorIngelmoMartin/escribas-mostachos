@@ -8,8 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
-import com.escribasmostachos.Escribasmostachos.dto.BookUpdateDTO;
+import com.escribasmostachos.Escribasmostachos.dto.books.BookDTO;
+import com.escribasmostachos.Escribasmostachos.dto.books.BookUpdateDTO;
 import com.escribasmostachos.Escribasmostachos.exception.InvalidIsbnException;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceAlreadyExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceDontExistsOnDatabaseException;

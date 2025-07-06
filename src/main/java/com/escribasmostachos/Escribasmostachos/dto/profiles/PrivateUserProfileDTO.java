@@ -1,4 +1,4 @@
-package com.escribasmostachos.Escribasmostachos.dto;
+package com.escribasmostachos.Escribasmostachos.dto.profiles;
 
 import lombok.Data;
 

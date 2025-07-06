@@ -1,4 +1,4 @@
-package com.escribasmostachos.Escribasmostachos.dto;
+package com.escribasmostachos.Escribasmostachos.dto.meetups;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
