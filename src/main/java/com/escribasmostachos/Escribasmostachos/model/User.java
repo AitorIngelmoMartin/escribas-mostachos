@@ -2,8 +2,11 @@ package com.escribasmostachos.Escribasmostachos.model;
 
 import java.util.List;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -23,16 +26,19 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"readingMeetups", "createdMeetups", "currentBooks"})
 @Table(name = "users")
 public class User implements UserDetails {
 
@@ -64,6 +70,12 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserBookRead> currentBooks;
+
+    @ManyToMany(mappedBy = "participants")
+    private Set<ReadingMeetup> readingMeetups = new HashSet<>();
+
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReadingMeetup> createdMeetups = new ArrayList<>();
 
     private LocalDate membershipDate;
 
@@ -98,17 +110,33 @@ public class User implements UserDetails {
                 .collect(Collectors.toList());
             dto.setCurrentBooks(currentBookDTOs);
         }
+        if(this.readingMeetups != null){
+            dto.setReadingMeetups(this.readingMeetups.stream()
+                                    .filter(meetup -> meetup.getStatus() == MeetupStatus.ACTIVE)
+                                    .map(ReadingMeetup::toReadingMeetupDTO)
+                                    .collect(Collectors.toSet()));
+        }
         dto.setMembershipDate(this.membershipDate);
         return dto;
     }
 
     public void addCurrentBookRead(UserBookRead reading) {
-        currentBooks.add(reading);
+        this.currentBooks.add(reading);
         reading.setUser(this);
     }
 
     public void removeCurrentBookRead(UserBookRead reading) {
-        currentBooks.remove(reading);
+        this.currentBooks.remove(reading);
+    }
+
+    public void addCreatedMeetup(ReadingMeetup meetup) {
+        this.createdMeetups.add(meetup);
+        meetup.setCreator(this);
+    }
+
+    public void removeCreatedMeetup(ReadingMeetup meetup) {
+        this.createdMeetups.remove(meetup);
+        meetup.setCreator(null);
     }
 
     public void updatePropertiesFromDto(ProfileUpdateDTO dto) {
