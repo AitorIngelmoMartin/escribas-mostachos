@@ -69,9 +69,10 @@ public class ReadingMeetup {
         user.getReadingMeetups().add(this);
     }
 
-    public void removeParticipant(User user) {
-        this.participants.remove(user);
+    public boolean removeParticipant(User user) {
+        boolean removeOperation = this.participants.remove(user);
         user.getReadingMeetups().remove(this);
+        return removeOperation;
     }
 
     public ReadingMeetup(String title, User creator, Book book) {

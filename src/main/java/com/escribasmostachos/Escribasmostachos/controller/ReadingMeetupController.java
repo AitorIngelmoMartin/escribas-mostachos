@@ -89,4 +89,13 @@ public class ReadingMeetupController {
 
         return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, "User added to reading meetup"));
     }
+
+    @PostMapping("/{publicId}/leave")
+    public ResponseEntity<ApiResponseDTO<Void>> leaveMeetup(@PathVariable String publicId, Authentication authentication) {
+        Long readingMeetupId = publicIdGenerator.decode(publicId);
+        User user = (User) authentication.getPrincipal();
+        
+        readingMeetupService.leaveMeetup(readingMeetupId, user.getId());
+        return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, "User removed from meeting"));
+    }
 }

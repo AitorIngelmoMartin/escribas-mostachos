@@ -89,6 +89,16 @@ public class ReadingMeetupService {
         readingMeetupToJoin.addParticipant(userToAdd);
     }
 
+    @Transactional
+    public void leaveMeetup(Long readingMeetupId, Long userId) {
+        ReadingMeetup readingMeetupToleave = findReadingMeetupById(readingMeetupId);
+        User userToAdd = userService.getUserById(userId);
+        boolean removeOperation = readingMeetupToleave.removeParticipant(userToAdd);
+        if(!removeOperation){
+            throw new ResourceDontExistsOnDatabaseException("User not registered on that meeting");
+        }
+    }
+
     private ReadingMeetup findReadingMeetupById(Long readingMeetupId){
         return meetupRepository.findById(readingMeetupId).orElseThrow(() ->new ResourceDontExistsOnDatabaseException("No meeting found")); 
     }
