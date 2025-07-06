@@ -70,7 +70,8 @@ public class ReadingService {
         Book bookReadByUser = bookService.getBookByIsbn(dto.getIsbn());
         log.debug("UserId: " + userThatReadTheBook.getId());
         log.debug("BookId: " + bookReadByUser.getId());
-        Optional<UserBookRead> bookReadingAlreadyRegistered = userBookReadRepository.findByUserIdAndBookId(userThatReadTheBook.getId(), bookReadByUser.getId());
+
+        Optional<UserBookRead> bookReadingAlreadyRegistered = getBooksReadingByUserIdAndBookId(userThatReadTheBook.getId(), bookReadByUser.getId());
 
         UserBookRead userBookRead;
         if(bookReadingAlreadyRegistered.isPresent()){
@@ -88,6 +89,14 @@ public class ReadingService {
         updateUserReadBookInfo(userThatReadTheBook, bookReadByUser, userBookRead);
     }
     
+    public Optional<UserBookRead> getBooksReadingByUserIdAndBookId(Long userId, Long bookId){
+        return userBookReadRepository.findByUserIdAndBookId(userId, bookId);
+    }
+
+    public List<UserBookRead> getBooksReadingByBookIdAndUserIds(Long bookId, List<Long> userIds){
+        return userBookReadRepository.findByBookIdAndUserIds(bookId, userIds);
+    }
+
     private void updateUserReadBookInfo(User user, Book book, UserBookRead userBookRead){
         boolean isInCurrentBooks = user.getCurrentBooks().stream()
                                         .anyMatch(reading -> reading.getBook()
@@ -109,5 +118,9 @@ public class ReadingService {
         return userReads.stream()
             .map(userBookRead -> userBookRead.getBook().toBookDto())
             .collect(Collectors.toList());
+    }
+
+    public void saveAll(List<UserBookRead> readings) {
+        userBookReadRepository.saveAll(readings);
     }
 }
