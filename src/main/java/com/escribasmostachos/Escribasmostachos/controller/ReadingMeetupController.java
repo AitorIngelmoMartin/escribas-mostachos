@@ -37,6 +37,7 @@ public class ReadingMeetupController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(required = false) MeetupStatus status,
         @RequestParam(required = false, defaultValue = "false") boolean ownOnly,
+        @RequestParam(required = false) String creatorUsername,
         Authentication authentication) {
         List<Integer> allowedLimits = List.of(10, 25, 50);
 
@@ -54,14 +55,16 @@ public class ReadingMeetupController {
             ));
         }
 
-        
+        String usernameToFilter = null;
         Long userId = null;
         if (ownOnly) {
             User user = (User) authentication.getPrincipal();
             userId = user.getId();
+        } else if (creatorUsername != null && !creatorUsername.isBlank()) {
+            usernameToFilter = creatorUsername;
         }
 
-        List<ReadingMeetupDTO> readingMeetup = readingMeetupService.getMeetups(userId, limit, page, status);
+        List<ReadingMeetupDTO> readingMeetup = readingMeetupService.getMeetups(userId, limit, page, status, usernameToFilter);
         return ResponseEntity.ok(new ApiResponseDTO<List<ReadingMeetupDTO>>(HttpStatus.OK, "Reading meetup draft created successfully", readingMeetup));
     }
 
