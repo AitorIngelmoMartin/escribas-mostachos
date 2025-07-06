@@ -144,6 +144,14 @@ public class User implements UserDetails {
         meetup.setCreator(null);
     }
 
+    public void addReadingMeetup(ReadingMeetup meetup) {
+        this.readingMeetups.add(meetup);
+    }
+
+    public void removeReadingMeetup(ReadingMeetup meetup) {
+        this.readingMeetups.remove(meetup);
+    }
+
     public void updatePropertiesFromDto(ProfileUpdateDTO dto) {
         if (dto.getFirstName() != null && !Objects.equals(this.firstName, dto.getFirstName())) {
             this.firstName = dto.getFirstName();
