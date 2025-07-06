@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDTO;
 import com.escribasmostachos.Escribasmostachos.dto.meetups.CreateMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.dto.meetups.ReadingMeetupDTO;
+import com.escribasmostachos.Escribasmostachos.dto.meetups.UpdateMeetupStatusDTO;
 import com.escribasmostachos.Escribasmostachos.model.MeetupStatus;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.ReadingMeetupService;
@@ -97,5 +99,17 @@ public class ReadingMeetupController {
         
         readingMeetupService.leaveMeetup(readingMeetupId, user.getId());
         return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, "User removed from meeting"));
+    }
+
+    @PatchMapping("/{publicId}/status")
+    public ResponseEntity<ApiResponseDTO<ReadingMeetupDTO>> changeMeetupStatus(
+        @PathVariable String publicId,
+        @Valid @RequestBody UpdateMeetupStatusDTO UpdateMeetupStatusDTO,
+        Authentication authentication) {
+        Long readingMeetupId = publicIdGenerator.decode(publicId);
+        User user = (User) authentication.getPrincipal();
+        
+        ReadingMeetupDTO updatedReadingMeetup = readingMeetupService.changeMeetupStatus(readingMeetupId, user.getId(), UpdateMeetupStatusDTO.getStatus());
+        return ResponseEntity.ok(new ApiResponseDTO<ReadingMeetupDTO>(HttpStatus.OK, "update successfully", updatedReadingMeetup));
     }
 }
