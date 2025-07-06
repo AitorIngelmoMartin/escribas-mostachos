@@ -3,6 +3,7 @@ package com.escribasmostachos.Escribasmostachos.service;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.dto.CreateMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.dto.ReadingMeetupDTO;
+import com.escribasmostachos.Escribasmostachos.exception.ResourceDontExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.Book;
 import com.escribasmostachos.Escribasmostachos.model.MeetupStatus;
 import com.escribasmostachos.Escribasmostachos.model.ReadingMeetup;
@@ -79,5 +80,16 @@ public class ReadingMeetupService {
         return readingMeetups.getContent().stream()
                     .map(meetupMapper::toReadingMeetupDTO)
                     .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void addUserToMeetup(Long readingMeetupId, Long userId) {
+        ReadingMeetup readingMeetupToJoin = findReadingMeetupById(readingMeetupId);
+        User userToAdd = userService.getUserById(userId);
+        readingMeetupToJoin.addParticipant(userToAdd);
+    }
+
+    private ReadingMeetup findReadingMeetupById(Long readingMeetupId){
+        return meetupRepository.findById(readingMeetupId).orElseThrow(() ->new ResourceDontExistsOnDatabaseException("No meeting found")); 
     }
 }

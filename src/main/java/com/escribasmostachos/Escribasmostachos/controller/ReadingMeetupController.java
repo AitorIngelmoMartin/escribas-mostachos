@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import com.escribasmostachos.Escribasmostachos.dto.ReadingMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.model.MeetupStatus;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.service.ReadingMeetupService;
+import com.escribasmostachos.Escribasmostachos.utils.PublicIdGenerator;
 
 import jakarta.validation.Valid;
 
@@ -26,9 +28,11 @@ import jakarta.validation.Valid;
 public class ReadingMeetupController {
     
     private final ReadingMeetupService readingMeetupService;
+    private final PublicIdGenerator publicIdGenerator;
 
-    public ReadingMeetupController(ReadingMeetupService readingMeetupService){
+    public ReadingMeetupController(ReadingMeetupService readingMeetupService, PublicIdGenerator publicIdGenerator){
         this.readingMeetupService = readingMeetupService;
+        this.publicIdGenerator = publicIdGenerator;
     }
 
     @GetMapping
@@ -72,7 +76,17 @@ public class ReadingMeetupController {
     public ResponseEntity<ApiResponseDTO<ReadingMeetupDTO>> createMeetup(@Valid @RequestBody CreateMeetupDTO createMeetupDTO, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
 
-        ReadingMeetupDTO readingMeetup = readingMeetupService.createMeetup(user.getId(), createMeetupDTO).toReadingMeetupDTO();
-        return ResponseEntity.ok(new ApiResponseDTO<ReadingMeetupDTO>(HttpStatus.OK, "Reading meetup draft created successfully", readingMeetup));
+        ReadingMeetupDTO readingMeetup = readingMeetupService.createMeetup(user.getId(), createMeetupDTO);
+        return ResponseEntity.ok(new ApiResponseDTO<ReadingMeetupDTO>(HttpStatus.CREATED, "Reading meetup draft created successfully", readingMeetup));
+    }
+
+    @PostMapping("/{publicId}/join")
+    public ResponseEntity<ApiResponseDTO<Void>> addUserToMeetup(@PathVariable String publicId, Authentication authentication) {
+        Long readingMeetupId = publicIdGenerator.decode(publicId);
+        User user = (User) authentication.getPrincipal();
+        
+        readingMeetupService.addUserToMeetup(readingMeetupId, user.getId());
+
+        return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, "User added to reading meetup"));
     }
 }
