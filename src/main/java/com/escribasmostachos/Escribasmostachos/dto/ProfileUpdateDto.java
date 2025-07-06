@@ -17,4 +17,6 @@ public class ProfileUpdateDTO {
 
     @Pattern(regexp = "^(https?://.*)?$", message = "Profile picture URL must be a valid URL")
     private String profilePictureUrl;
+
+    private Boolean profileIsPrivate;
 }

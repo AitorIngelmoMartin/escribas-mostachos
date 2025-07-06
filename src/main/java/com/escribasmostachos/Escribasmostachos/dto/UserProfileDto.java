@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class UserProfileDTO {
+public class UserProfileDTO implements BaseUserProfileDTO{
 
     private String username;
 

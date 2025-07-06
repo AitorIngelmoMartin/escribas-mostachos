@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.escribasmostachos.Escribasmostachos.dto.BookDTO;
 import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDTO;
+import com.escribasmostachos.Escribasmostachos.dto.PrivateUserProfileDTO;
 import com.escribasmostachos.Escribasmostachos.dto.RegisterRequestDTO;
 import com.escribasmostachos.Escribasmostachos.dto.UserProfileDTO;
 
@@ -79,6 +80,8 @@ public class User implements UserDetails {
 
     private LocalDate membershipDate;
 
+    private Boolean profileIsPrivate = false;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();
@@ -115,6 +118,13 @@ public class User implements UserDetails {
         return dto;
     }
 
+    public PrivateUserProfileDTO toPrivateUserProfileDTO() {
+        PrivateUserProfileDTO publicDTO = new PrivateUserProfileDTO();
+        publicDTO.setUsername(this.username);
+        publicDTO.setProfilePictureUrl(this.profilePictureUrl);
+        return publicDTO;
+    }
+
     public void addCurrentBookRead(UserBookRead reading) {
         this.currentBooks.add(reading);
         reading.setUser(this);
@@ -145,6 +155,10 @@ public class User implements UserDetails {
 
         if (dto.getProfilePictureUrl() != null && !Objects.equals(this.profilePictureUrl, dto.getProfilePictureUrl())) {
             this.profilePictureUrl = dto.getProfilePictureUrl();
+        }
+
+        if (dto.getProfileIsPrivate() != null && !Objects.equals(this.profileIsPrivate, dto.getProfileIsPrivate())) {
+            this.profileIsPrivate = dto.getProfileIsPrivate();
         }
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.escribasmostachos.Escribasmostachos.dto.BaseUserProfileDTO;
 import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDTO;
 import com.escribasmostachos.Escribasmostachos.dto.UserProfileDTO;
 import com.escribasmostachos.Escribasmostachos.model.User;
@@ -39,8 +40,16 @@ public class UserService implements UserDetailsService {
         return getUserById(userId).toProfileDto();
     }
 
-    public UserProfileDTO getProfileByUsername(String username){
-        return loadUserByUsername(username).toProfileDto();
+    public BaseUserProfileDTO getProfileByUsername(String username){
+        User userToGetProfile = loadUserByUsername(username);
+
+        BaseUserProfileDTO profileToReturn;
+        if (userToGetProfile.getProfileIsPrivate()){
+            profileToReturn = userToGetProfile.toPrivateUserProfileDTO();
+        }else{
+            profileToReturn = userToGetProfile.toProfileDto();
+        }  
+        return profileToReturn;
     }
 
     @Transactional
@@ -58,6 +67,7 @@ public class UserService implements UserDetailsService {
     private boolean haveSomethingToUpdate(ProfileUpdateDTO dto) {
         return (dto.getFirstName() != null) ||
             (dto.getLastName() != null) ||
+            (dto.getProfileIsPrivate() != null) ||
             (dto.getProfilePictureUrl() != null);
     }
 

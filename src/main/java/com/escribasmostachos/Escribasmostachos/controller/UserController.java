@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.Authentication;
 
 import com.escribasmostachos.Escribasmostachos.dto.ApiResponseDTO;
+import com.escribasmostachos.Escribasmostachos.dto.BaseUserProfileDTO;
 import com.escribasmostachos.Escribasmostachos.dto.ProfileUpdateDTO;
 import com.escribasmostachos.Escribasmostachos.dto.UserProfileDTO;
 import com.escribasmostachos.Escribasmostachos.model.User;
@@ -51,13 +52,13 @@ public class UserController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<ApiResponseDTO<UserProfileDTO>> getUserProfile(
+    public ResponseEntity<ApiResponseDTO<BaseUserProfileDTO>> getUserProfile(
             @PathVariable
             @Size(min = 3, max = 20, message = "Invalid username size")
             @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Invalid username format")
             String username) {
-        UserProfileDTO userProfileDto = userService.getProfileByUsername(username);
+        BaseUserProfileDTO userProfileDto = userService.getProfileByUsername(username);
 
-        return ResponseEntity.ok(new ApiResponseDTO<UserProfileDTO>(HttpStatus.OK, "user profile obtained", userProfileDto));
+        return ResponseEntity.ok(new ApiResponseDTO<BaseUserProfileDTO>(HttpStatus.OK, "user profile obtained", userProfileDto));
     }
 }
