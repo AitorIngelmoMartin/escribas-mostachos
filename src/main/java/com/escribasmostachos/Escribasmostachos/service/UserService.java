@@ -1,5 +1,7 @@
 package com.escribasmostachos.Escribasmostachos.service;
 
+import java.util.Set;
+
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -73,5 +75,9 @@ public class UserService implements UserDetailsService {
 
     public void save(User user) {
         userRepository.save(user);
+    }
+
+    public void saveAll(Set<User> users) {
+        userRepository.saveAll(users);
     }
 }
