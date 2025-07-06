@@ -82,9 +82,8 @@ public class BookService {
                          .orElseThrow(() -> new ResourceDontExistsOnDatabaseException("No book found on database with ISBN: " + isbn));
     }
     
-    public BookDTO getBookById(Long bookId) {
+    public Book getBookById(Long bookId) {
         return bookRepository.findById(bookId)
-                         .map(Book::toBookDto)
                          .orElseThrow(() -> new ResourceDontExistsOnDatabaseException("No book found on database with ID: " + bookId));
     }
 

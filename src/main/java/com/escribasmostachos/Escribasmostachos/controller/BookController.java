@@ -40,7 +40,7 @@ public class BookController {
         @Min(value = 1, message = "ID must be zero or positive")
         Long bookId) {
 
-        BookDTO book = bookService.getBookById(bookId);
+        BookDTO book = bookService.getBookById(bookId).toBookDto();
         return ResponseEntity.ok(new ApiResponseDTO<BookDTO>(HttpStatus.OK, "Books retrieved successfully", book));
     }
 
