@@ -22,6 +22,9 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey;
 
+    @Value("${jwt.expiration-in-minutes:15}")
+    private long jwtExpirationInMinutes;
+
     private Key key;
 
     @PostConstruct
@@ -37,7 +40,7 @@ public class JwtService {
             .claim("userId", user.getId())
             .claim("role", user.getRole().name())
             .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1h
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * jwtExpirationInMinutes))
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
     }
