@@ -1,0 +1,20 @@
+version = 1
+url = "http://127.0.0.1:8080/auth/register"
+method = "POST"
+
+[body]
+type = "raw"
+format = "json"
+body = '''
+{
+    "email":"c@d.com",
+    "username":"username_3",
+    "password":"password"
+}'''
+
+[headers]
+Content-Type = "application/json"
+
+[variables]
+
+[inactive-params]

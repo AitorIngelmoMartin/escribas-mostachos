@@ -1,0 +1,22 @@
+version = 1
+url = "http://127.0.0.1:8080/books"
+method = "POST"
+
+[body]
+type = "raw"
+format = "json"
+body = '''
+{
+  "isbn": "9788408305910",
+  "title": "Clean Code",
+  "author": "Robert C. Martin",
+  "coverUrl": "https://example.com/covers/clean-code.jpg"
+}'''
+
+[headers]
+Authorization = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZV8zIiwiZW1haWwiOiJjQGQuY29tIiwidXNlcklkIjozLCJpYXQiOjE3NTEyMjAwMjYsImV4cCI6MTc1MTIyMzYyNn0.6He4QcG3udJa5qnMOFWvCwlnq-sGzFVp3L3uOQ9_3VE"
+Content-Type = "application/json"
+
+[variables]
+
+[inactive-params]

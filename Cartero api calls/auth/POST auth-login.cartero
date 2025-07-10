@@ -1,0 +1,19 @@
+version = 1
+url = "http://127.0.0.1:8080/auth/login"
+method = "POST"
+
+[body]
+type = "raw"
+format = "json"
+body = '''
+{
+"username":"username_1",
+"password":"password"
+}'''
+
+[headers]
+Content-Type = "application/json"
+
+[variables]
+
+[inactive-params]
