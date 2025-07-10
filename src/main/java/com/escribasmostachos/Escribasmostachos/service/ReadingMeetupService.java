@@ -4,6 +4,7 @@ import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.model.UserBookRead;
 import com.escribasmostachos.Escribasmostachos.dto.meetups.CreateMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.dto.meetups.ReadingMeetupDTO;
+import com.escribasmostachos.Escribasmostachos.exception.BusinessConflictException;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceAlreadyExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceDontExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.exception.UnauthorizedUserActionException;
@@ -101,6 +102,9 @@ public class ReadingMeetupService {
     @Transactional
     public void joinToMeetup(Long readingMeetupId, Long userId) {
         ReadingMeetup readingMeetupToJoin = findReadingMeetupById(readingMeetupId);
+        if (!readingMeetupToJoin.getStatus().equals(MeetupStatus.DRAFT)){
+            throw new BusinessConflictException("You cant join a meetup that is not on DRAFT status");
+        }
         User userToAdd = userService.getUserById(userId);
         readingMeetupToJoin.addParticipant(userToAdd);
     }
