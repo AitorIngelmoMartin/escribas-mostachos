@@ -70,7 +70,7 @@ public class User implements UserDetails {
     private Integer booksReadCount = 0;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserBookRead> currentBooks;
+    private Set<UserBookRead> currentBooks;
 
     @ManyToMany(mappedBy = "participants")
     private Set<ReadingMeetup> readingMeetups = new HashSet<>();
