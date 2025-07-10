@@ -116,6 +116,12 @@ public class ReadingMeetupService {
     }
 
     @Transactional
+    public void deleteMeetup(Long readingMeetupId, Long userId) {
+        ReadingMeetup readingMeetupToDelete = findReadingMeetupById(readingMeetupId);
+        meetupRepository.deleteById(readingMeetupToDelete.getId());
+    }
+
+    @Transactional
     public ReadingMeetupDTO changeMeetupStatus(Long readingMeetupId, Long userId, MeetupStatus status) {
         ReadingMeetup readingMeetupToUpdate = findReadingMeetupById(readingMeetupId);
 

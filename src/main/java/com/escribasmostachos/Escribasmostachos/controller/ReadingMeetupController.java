@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -111,5 +113,15 @@ public class ReadingMeetupController {
         
         ReadingMeetupDTO updatedReadingMeetup = readingMeetupService.changeMeetupStatus(readingMeetupId, user.getId(), UpdateMeetupStatusDTO.getStatus());
         return ResponseEntity.ok(new ApiResponseDTO<ReadingMeetupDTO>(HttpStatus.OK, "update successfully", updatedReadingMeetup));
+    }
+
+    @DeleteMapping("/{publicId}/delete")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+    public ResponseEntity<ApiResponseDTO<Void>> deleteMeetup(@PathVariable String publicId, Authentication authentication) {
+        Long readingMeetupId = publicIdGenerator.decode(publicId);
+        User user = (User) authentication.getPrincipal();
+        
+        readingMeetupService.deleteMeetup(readingMeetupId, user.getId());
+        return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, null));
     }
 }
