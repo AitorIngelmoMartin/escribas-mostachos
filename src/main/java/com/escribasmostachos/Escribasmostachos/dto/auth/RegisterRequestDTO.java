@@ -23,4 +23,12 @@ public class RegisterRequestDTO {
 
     @NotBlank
     private String password;
+
+    public void setEmail(String email) {
+        this.email = (email != null) ? email.toLowerCase() : null;
+    }
+
+    public void setUsername(String username) {
+        this.username = (username != null) ? username.toLowerCase() : null;
+    }
 }
