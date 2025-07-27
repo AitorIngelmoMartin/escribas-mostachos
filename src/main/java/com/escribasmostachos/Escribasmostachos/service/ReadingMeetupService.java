@@ -66,9 +66,8 @@ public class ReadingMeetupService {
         }
 
         ReadingMeetup newMeetup = new ReadingMeetup(createMeetupDTO.getTitle(), creator, book);
-        meetupParticipationService.addParticipant(newMeetup, creator);
-
         meetupRepository.save(newMeetup);
+        meetupParticipationService.addParticipant(newMeetup, creator);
         return meetupMapper.toReadingMeetupDTO(newMeetup);
     }
 
@@ -156,13 +155,16 @@ public class ReadingMeetupService {
         if(readingMeetupToUpdate.getCreator().getId() != userId){
             throw new UnauthorizedUserActionException("You can only update status from your own meetups");
         }
-
-        if(readingMeetupToUpdate.getStatus().equals(MeetupStatus.CANCELLED)){
+        MeetupStatus currentMeetupStatus = readingMeetupToUpdate.getStatus();
+        if(currentMeetupStatus.equals(MeetupStatus.CANCELLED)){
             throw new UnauthorizedUserActionException("You can't update meetups canceled");
         }
 
-        if(!readingMeetupToUpdate.getStatus().equals(status)){
+        if(!currentMeetupStatus.equals(status)){
             if(status.equals(MeetupStatus.COMPLETED)){
+                if (!currentMeetupStatus.equals(MeetupStatus.ACTIVE)){
+                    throw new BusinessConflictException("You can't update meetups to 'COMPLETED' if they weren't in 'ACTIVE' status");
+                }
                 processCompletion(readingMeetupToUpdate);
             }else if(status.equals(MeetupStatus.ACTIVE)){
                 processActivation(readingMeetupToUpdate);
