@@ -103,6 +103,15 @@ public class ReadingMeetupController {
         return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, "User removed from meeting"));
     }
 
+    @PostMapping("/{publicId}/complete")
+    public ResponseEntity<ApiResponseDTO<Void>> completeMeetup(@PathVariable String publicId, Authentication authentication) {
+        Long readingMeetupId = publicIdGenerator.decode(publicId);
+        User user = (User) authentication.getPrincipal();
+        
+        readingMeetupService.completeMeetup(readingMeetupId, user.getId());
+        return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, "Meetup marked as completed"));
+    }
+
     @PatchMapping("/{publicId}/status")
     public ResponseEntity<ApiResponseDTO<ReadingMeetupDTO>> changeMeetupStatus(
         @PathVariable String publicId,
