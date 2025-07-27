@@ -61,5 +61,11 @@ public class MeetupParticipationService {
         return userMeetupParticipationRepository
                     .findByMeetupIdAndUserId(readingMeetupId, userId)
                     .orElseThrow(() -> new ResourceDontExistsOnDatabaseException("User not registered in that meetup"));
-    }      
+    }
+
+    @Transactional
+    public void removeAllByMeetupId(Long meetupId) {
+        userMeetupParticipationRepository.deleteAllByMeetupId(meetupId);
+    }
+
 }

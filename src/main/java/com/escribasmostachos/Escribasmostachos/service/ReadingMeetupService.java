@@ -104,7 +104,7 @@ public class ReadingMeetupService {
             throw new ResourceAlreadyExistsOnDatabaseException("User is already in the meetup");
         }
 
-        User newParticipant = userService.getUserById(userId);
+        User newParticipant = new User(userId);
         meetupParticipationService.addParticipant(readingMeetupToJoin, newParticipant);
     }
 
@@ -179,6 +179,30 @@ public class ReadingMeetupService {
         return meetupMapper.toReadingMeetupDTO(readingMeetupToUpdate);
     }
 
+    /**
+     * Processes the completion of a reading meetup.
+     * 
+     * <p>This operation performs the following steps:
+     * <ul>
+     *   <li>Retrieves the book associated with the meetup.</li>
+     *   <li>Collects all users participating in the meetup.</li>
+     *   <li>Fetches existing readings of the book by those users.</li>
+     *   <li>Updates the books read count for users who have completed the meetup but do not
+     *       yet have a recorded reading of the book.</li>
+     *   <li>Creates and saves new {@code UserBookRead} entities for users who completed the meetup
+     *       and did not have previous reading records.</li>
+     *   <li>Sets the meetup end date to the current date.</li>
+     *   <li>Saves the updated users and new reading records to the database.</li>
+     * </ul>
+     * 
+     * <p><b>Important:</b> This method should be called within a transactional context as it performs
+     * multiple database write operations that need to be atomic.
+     * <br>It is recommended that the public method invoking this one is annotated with {@code @Transactional}.
+     * 
+     * <p>This business operation is infrequent and only occurs when a reading event (meetup) is completed.
+     * 
+     * @param meetup the reading meetup to process
+     */
     private void processCompletion(ReadingMeetup meetup) {
         Book book = meetup.getBook();
         Set<User> participants = meetup.getParticipants().stream()
@@ -218,13 +242,8 @@ public class ReadingMeetupService {
 
     private void processCancellation(ReadingMeetup meetup) {
         meetup.setMeetupEndDate(LocalDate.now());
-
+        meetupParticipationService.removeAllByMeetupId(meetup.getId());
         meetupRepository.save(meetup);
-        userService.saveAll(
-            meetup.getParticipants().stream()
-                .map(UserMeetupParticipation::getUser)
-                .collect(Collectors.toSet())
-        );
     }
 
     private void processBackToDraft(ReadingMeetup meetup) {
