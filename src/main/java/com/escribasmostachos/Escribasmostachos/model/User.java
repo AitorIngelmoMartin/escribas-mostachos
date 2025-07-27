@@ -27,7 +27,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -39,7 +38,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"readingMeetups", "createdMeetups", "currentBooks"})
+@EqualsAndHashCode(exclude = {"meetupParticipations", "createdMeetups", "currentBooks"})
 @Table(name = "users")
 public class User implements UserDetails {
 
@@ -72,8 +71,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<UserBookRead> currentBooks;
 
-    @ManyToMany(mappedBy = "participants")
-    private Set<ReadingMeetup> readingMeetups = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserMeetupParticipation> meetupParticipations = new HashSet<>();
 
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReadingMeetup> createdMeetups = new ArrayList<>();
@@ -142,14 +141,6 @@ public class User implements UserDetails {
     public void removeCreatedMeetup(ReadingMeetup meetup) {
         this.createdMeetups.remove(meetup);
         meetup.setCreator(null);
-    }
-
-    public void addReadingMeetup(ReadingMeetup meetup) {
-        this.readingMeetups.add(meetup);
-    }
-
-    public void removeReadingMeetup(ReadingMeetup meetup) {
-        this.readingMeetups.remove(meetup);
     }
 
     public void updatePropertiesFromDto(ProfileUpdateDTO dto) {
