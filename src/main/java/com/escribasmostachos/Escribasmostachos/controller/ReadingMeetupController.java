@@ -72,7 +72,7 @@ public class ReadingMeetupController {
             usernameToFilter = creatorUsername;
         }
 
-        List<ReadingMeetupDTO> readingMeetup = readingMeetupService.getMeetups(userId, limit, page, status, usernameToFilter);
+        List<ReadingMeetupDTO> readingMeetup = readingMeetupService.getMeetups(status, userId, usernameToFilter, limit, page);
         return ResponseEntity.ok(new ApiResponseDTO<List<ReadingMeetupDTO>>(HttpStatus.OK, null , readingMeetup));
     }
 

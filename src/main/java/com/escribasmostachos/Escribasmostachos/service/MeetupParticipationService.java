@@ -3,24 +3,30 @@ package com.escribasmostachos.Escribasmostachos.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.escribasmostachos.Escribasmostachos.exception.BusinessConflictException;
+import com.escribasmostachos.Escribasmostachos.exception.BusinessLogicalException;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceDontExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.model.ReadingMeetup;
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.model.UserMeetupParticipation;
+import com.escribasmostachos.Escribasmostachos.repository.UserMeetupParticipationRepository;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class MeetupParticipationService {
+    
+    private final UserMeetupParticipationRepository userMeetupParticipationRepository;
+
+    public MeetupParticipationService(UserMeetupParticipationRepository userMeetupParticipationRepository){
+        this.userMeetupParticipationRepository = userMeetupParticipationRepository;
+    }
 
     @Transactional
     public void addParticipant(ReadingMeetup meetup, User user) {
-        boolean alreadyExists = meetup.getParticipants().stream()
-                .anyMatch(participant -> participant.getUser().getId().equals(user.getId()));
-
+        boolean alreadyExists = userMeetupParticipationRepository.existsByMeetupAndUser(meetup, user);
         if (alreadyExists) {
-            throw new BusinessConflictException("The user is already a participant in the meetup");
+            throw new BusinessLogicalException("The user is already a participant in the meetup");
         }
 
         UserMeetupParticipation participation = new UserMeetupParticipation();
@@ -28,24 +34,32 @@ public class MeetupParticipationService {
         participation.setMeetup(meetup);
         participation.setCompleted(false);
 
+        userMeetupParticipationRepository.save(participation);
+
         meetup.getParticipants().add(participation);
         user.getMeetupParticipations().add(participation);
     }
 
-    @Transactional
-    public void removeParticipant(ReadingMeetup meetup, User user) {
-        boolean removed = meetup.getParticipants().removeIf(participant -> participant.getUser().equals(user));
-        if (removed) {
-            user.getMeetupParticipations().removeIf(participant -> participant.getMeetup().equals(meetup));
-        }
+    public void removeParticipant(UserMeetupParticipation meetupParticipation){
+        userMeetupParticipationRepository.delete(meetupParticipation);
     }
 
     @Transactional
-    public void markAsCompleted(ReadingMeetup meetup, User user) {
-        meetup.getParticipants().stream()
-            .filter(participant -> participant.getUser().equals(user))
-            .findFirst()
-            .orElseThrow(() -> new ResourceDontExistsOnDatabaseException("Not a participant"))
-            .setCompleted(true);
+    public void markAsCompleted(Long meetupId, Long userId) {
+        UserMeetupParticipation participation = userMeetupParticipationRepository
+            .findByMeetupIdAndUserId(meetupId, userId)
+            .orElseThrow(() -> new ResourceDontExistsOnDatabaseException("Not a participant"));
+        
+        participation.setCompleted(true);
     }
+
+    public boolean existsByMeetupIdAndUserId(Long readingMeetupId,Long userId){
+        return userMeetupParticipationRepository.existsByMeetupIdAndUserId(readingMeetupId, userId);
+    }
+
+    public UserMeetupParticipation findByMeetupIdAndUserId(Long readingMeetupId,Long userId){
+        return userMeetupParticipationRepository
+                    .findByMeetupIdAndUserId(readingMeetupId, userId)
+                    .orElseThrow(() -> new ResourceDontExistsOnDatabaseException("User not registered in that meetup"));
+    }      
 }
