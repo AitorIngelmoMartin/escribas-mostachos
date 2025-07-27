@@ -2,6 +2,7 @@ package com.escribasmostachos.Escribasmostachos.service;
 
 import com.escribasmostachos.Escribasmostachos.model.User;
 import com.escribasmostachos.Escribasmostachos.model.UserBookRead;
+import com.escribasmostachos.Escribasmostachos.model.UserMeetupParticipation;
 import com.escribasmostachos.Escribasmostachos.dto.meetups.CreateMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.dto.meetups.ReadingMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.exception.BusinessConflictException;
@@ -38,32 +39,35 @@ public class ReadingMeetupService {
     private final BookService bookService;
     private final ReadingService readingService;
     private final ReadingMeetupMapper meetupMapper;
+    private final MeetupParticipationService meetupParticipationService;
 
     public ReadingMeetupService(ReadingMeetupRepository meetupRepository, 
                                 UserService userService,
                                 BookService bookService,
                                 ReadingService readingService,
-                                ReadingMeetupMapper meetupMapper) {
+                                ReadingMeetupMapper meetupMapper,
+                                MeetupParticipationService meetupParticipationService) {
         this.meetupRepository = meetupRepository;
         this.userService = userService;
         this.bookService = bookService;
         this.readingService = readingService;
         this.meetupMapper = meetupMapper;
+        this.meetupParticipationService = meetupParticipationService;
     }
 
     @Transactional
     public ReadingMeetupDTO createMeetup(Long creatorId, CreateMeetupDTO createMeetupDTO) {
         User creator = userService.getUserById(creatorId);
         Book book = bookService.getBookById(createMeetupDTO.getBookId());
-
-        ReadingMeetup newMeetup = new ReadingMeetup(createMeetupDTO.getTitle(), creator, book);
-        newMeetup.addParticipant(creator);
-
+        
         Optional<ReadingMeetup> existingMeetup = meetupRepository.findByCreatorIdAndBookIdAndStatus(creator.getId(), book.getId(), MeetupStatus.DRAFT);
-
         if(existingMeetup.isPresent()){
             throw new ResourceAlreadyExistsOnDatabaseException("You already have a draft of a meetup to read that book");
         }
+
+        ReadingMeetup newMeetup = new ReadingMeetup(createMeetupDTO.getTitle(), creator, book);
+        meetupParticipationService.addParticipant(newMeetup, creator);
+
         meetupRepository.save(newMeetup);
         return meetupMapper.toReadingMeetupDTO(newMeetup);
     }
@@ -101,22 +105,42 @@ public class ReadingMeetupService {
 
     @Transactional
     public void joinToMeetup(Long readingMeetupId, Long userId) {
-        ReadingMeetup readingMeetupToJoin = findReadingMeetupById(readingMeetupId);
-        if (!readingMeetupToJoin.getStatus().equals(MeetupStatus.DRAFT)){
-            throw new BusinessConflictException("You cant join a meetup that is not on DRAFT status");
+        ReadingMeetup meetup = findReadingMeetupById(readingMeetupId);
+        if (!meetup.getStatus().equals(MeetupStatus.DRAFT)) {
+            throw new BusinessConflictException("You can't join a meetup that is not in DRAFT status");
         }
-        User userToAdd = userService.getUserById(userId);
-        readingMeetupToJoin.addParticipant(userToAdd);
+
+        boolean alreadyJoined = meetup.getParticipants().stream()
+            .anyMatch(participant -> participant.getUser().getId().equals(userId));
+
+        if (alreadyJoined) {
+            throw new ResourceAlreadyExistsOnDatabaseException("User is already in the meetup");
+        }
+
+        User newParticipant = userService.getUserById(userId);
+        meetupParticipationService.addParticipant(meetup, newParticipant);
     }
 
     @Transactional
     public void leaveMeetup(Long readingMeetupId, Long userId) {
-        ReadingMeetup readingMeetupToleave = findReadingMeetupById(readingMeetupId);
-        User userToAdd = userService.getUserById(userId);
-        boolean removeOperation = readingMeetupToleave.removeParticipant(userToAdd);
-        if(!removeOperation){
-            throw new ResourceDontExistsOnDatabaseException("User not registered on that meeting");
+        ReadingMeetup meetup = findReadingMeetupById(readingMeetupId);
+
+        Optional<UserMeetupParticipation> participationOpt = meetup.getParticipants().stream()
+            .filter(p -> p.getUser().getId().equals(userId))
+            .findFirst();
+        if (participationOpt.isEmpty()) {
+            throw new ResourceDontExistsOnDatabaseException("User not registered in that meetup");
         }
+
+        User userToRemove = userService.getUserById(userId);
+        meetupParticipationService.removeParticipant(meetup, userToRemove);
+    }
+
+    public void completeMeetup(Long readingMeetupId, Long userId) {
+        ReadingMeetup readingMeetupToComplete = findReadingMeetupById(readingMeetupId);
+        User userToAdd = userService.getUserById(userId);
+        
+        meetupParticipationService.markAsCompleted(readingMeetupToComplete, userToAdd);
     }
 
     @Transactional
@@ -156,7 +180,9 @@ public class ReadingMeetupService {
 
     private void processCompletion(ReadingMeetup meetup) {
         Book book = meetup.getBook();
-        Set<User> participants = meetup.getParticipants();
+        Set<User> participants = meetup.getParticipants().stream()
+            .map(UserMeetupParticipation::getUser)
+            .collect(Collectors.toSet());
 
         List<Long> userIds = participants.stream().map(User::getId).toList();
         List<UserBookRead> existingReadings = readingService.getBooksReadingByBookIdAndUserIds(book.getId(), userIds);
@@ -167,10 +193,10 @@ public class ReadingMeetupService {
 
         List<UserBookRead> newReadings = new ArrayList<>();
         Set<User> participantsToUpdate = new HashSet<>();
-        for (User user : participants) {
-            if (!alreadyHasReading.contains(user.getId())) {
+        for (UserMeetupParticipation participation : meetup.getParticipants()) {
+            User user = participation.getUser();
+            if (!alreadyHasReading.contains(user.getId()) && participation.isCompleted() ) {
                 user.setBooksReadCount(user.getBooksReadCount() + 1);
-                user.removeCreatedMeetup(meetup);
                 participantsToUpdate.add(user);
 
                 UserBookRead newUserBookRead = new UserBookRead(user, book);
@@ -185,36 +211,27 @@ public class ReadingMeetupService {
     }
 
     private void processActivation(ReadingMeetup meetup) {
-        Set<User> participants = meetup.getParticipants();
-        for (User user : participants) {
-            user.addReadingMeetup(meetup);
-        }
         meetup.setMeetupStartDate(LocalDate.now());
-
         meetupRepository.save(meetup);
-        userService.saveAll(participants);
     }
 
     private void processCancellation(ReadingMeetup meetup) {
-        Set<User> participants = meetup.getParticipants();
-        for (User user : participants) {
-            user.removeReadingMeetup(meetup);
-        }
         meetup.setMeetupEndDate(LocalDate.now());
 
         meetupRepository.save(meetup);
-        userService.saveAll(participants);
+        userService.saveAll(
+            meetup.getParticipants().stream()
+                .map(UserMeetupParticipation::getUser)
+                .collect(Collectors.toSet())
+        );
     }
 
     private void processBackToDraft(ReadingMeetup meetup) {
-        Set<User> participants = meetup.getParticipants();
-        for (User user : participants) {
-            user.removeReadingMeetup(meetup);
-        }
         meetup.setMeetupStartDate(null);
+        meetupRepository.save(meetup);
     }
 
-    private ReadingMeetup findReadingMeetupById(Long readingMeetupId){
+    public ReadingMeetup findReadingMeetupById(Long readingMeetupId){
         return meetupRepository.findById(readingMeetupId).orElseThrow(() ->new ResourceDontExistsOnDatabaseException("No meeting found")); 
     }
 }
