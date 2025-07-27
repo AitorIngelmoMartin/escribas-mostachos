@@ -121,7 +121,7 @@ public class ReadingMeetupController {
         User user = (User) authentication.getPrincipal();
         
         ReadingMeetupDTO updatedReadingMeetup = readingMeetupService.changeMeetupStatus(readingMeetupId, user.getId(), UpdateMeetupStatusDTO.getStatus());
-        return ResponseEntity.ok(new ApiResponseDTO<ReadingMeetupDTO>(HttpStatus.OK, "update successfully", updatedReadingMeetup));
+        return ResponseEntity.ok(new ApiResponseDTO<ReadingMeetupDTO>(HttpStatus.OK, "successfully updated", updatedReadingMeetup));
     }
 
     @DeleteMapping("/{publicId}/delete")
