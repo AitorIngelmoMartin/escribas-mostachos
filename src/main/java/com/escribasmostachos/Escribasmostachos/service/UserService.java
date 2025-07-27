@@ -73,6 +73,10 @@ public class UserService implements UserDetailsService {
             (dto.getProfilePictureUrl() != null);
     }
 
+    public Long findIdByUsername(String username) {
+        return userRepository.findIdByUsername(username).orElseThrow(() ->new UsernameNotFoundException("User not found"));
+    }
+    
     public void save(User user) {
         userRepository.save(user);
     }
