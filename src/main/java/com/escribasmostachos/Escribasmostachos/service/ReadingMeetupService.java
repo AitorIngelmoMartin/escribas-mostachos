@@ -104,12 +104,12 @@ public class ReadingMeetupService {
 
     @Transactional
     public void joinToMeetup(Long readingMeetupId, Long userId) {
-        ReadingMeetup meetup = findReadingMeetupById(readingMeetupId);
-        if (!meetup.getStatus().equals(MeetupStatus.DRAFT)) {
+        ReadingMeetup readingMeetupToJoin = findReadingMeetupById(readingMeetupId);
+        if (!readingMeetupToJoin.getStatus().equals(MeetupStatus.DRAFT)) {
             throw new BusinessConflictException("You can't join a meetup that is not in DRAFT status");
         }
 
-        boolean alreadyJoined = meetup.getParticipants().stream()
+        boolean alreadyJoined = readingMeetupToJoin.getParticipants().stream()
             .anyMatch(participant -> participant.getUser().getId().equals(userId));
 
         if (alreadyJoined) {
@@ -117,14 +117,14 @@ public class ReadingMeetupService {
         }
 
         User newParticipant = userService.getUserById(userId);
-        meetupParticipationService.addParticipant(meetup, newParticipant);
+        meetupParticipationService.addParticipant(readingMeetupToJoin, newParticipant);
     }
 
     @Transactional
     public void leaveMeetup(Long readingMeetupId, Long userId) {
-        ReadingMeetup meetup = findReadingMeetupById(readingMeetupId);
+        ReadingMeetup meetupToLeave = findReadingMeetupById(readingMeetupId);
 
-        Optional<UserMeetupParticipation> participationOpt = meetup.getParticipants().stream()
+        Optional<UserMeetupParticipation> participationOpt = meetupToLeave.getParticipants().stream()
             .filter(p -> p.getUser().getId().equals(userId))
             .findFirst();
         if (participationOpt.isEmpty()) {
@@ -132,7 +132,7 @@ public class ReadingMeetupService {
         }
 
         User userToRemove = userService.getUserById(userId);
-        meetupParticipationService.removeParticipant(meetup, userToRemove);
+        meetupParticipationService.removeParticipant(meetupToLeave, userToRemove);
     }
 
     public void completeMeetup(Long readingMeetupId, Long userId) {
