@@ -62,11 +62,4 @@ public class ReadingMeetup {
         this.meetupStartDate = LocalDate.now();
         this.setStatus(MeetupStatus.DRAFT);
     }
-
-    public void markAsCompleted(User user) {
-        participants.stream()
-            .filter(p -> p.getUser().equals(user))
-            .findFirst()
-            .ifPresent(p -> p.setCompleted(true));
-    }
 }
