@@ -81,7 +81,8 @@ public class ReadingMeetupController {
         User user = (User) authentication.getPrincipal();
 
         ReadingMeetupDTO readingMeetup = readingMeetupService.createMeetup(user.getId(), createMeetupDTO);
-        return ResponseEntity.ok(new ApiResponseDTO<ReadingMeetupDTO>(HttpStatus.CREATED, "Reading meetup draft created successfully", readingMeetup));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                             .body(new ApiResponseDTO<>(HttpStatus.CREATED, "Reading meetup draft created successfully", readingMeetup));
     }
 
     @PostMapping("/{publicId}/join")
