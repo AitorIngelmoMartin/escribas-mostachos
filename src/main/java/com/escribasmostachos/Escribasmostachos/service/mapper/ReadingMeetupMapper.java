@@ -24,8 +24,8 @@ public class ReadingMeetupMapper {
         dto.setBook(meetup.getBook().toBookDto());
         dto.setStatus(meetup.getStatus());
         dto.setParticipants(meetup.getParticipants().stream()
-                                        .map(user -> user.getUsername())
-                                        .collect(Collectors.toSet()));
+                          .map(participation -> participation.getUser().getUsername())
+                          .collect(Collectors.toSet()));
         dto.setPublicId(publicIdGenerator.encode(meetup.getId()));
 
         if (meetup.getMeetupStartDate() != null)

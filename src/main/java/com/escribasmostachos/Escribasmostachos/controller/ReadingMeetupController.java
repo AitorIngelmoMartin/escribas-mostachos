@@ -73,7 +73,7 @@ public class ReadingMeetupController {
         }
 
         List<ReadingMeetupDTO> readingMeetup = readingMeetupService.getMeetups(userId, limit, page, status, usernameToFilter);
-        return ResponseEntity.ok(new ApiResponseDTO<List<ReadingMeetupDTO>>(HttpStatus.OK, "Reading meetup draft created successfully", readingMeetup));
+        return ResponseEntity.ok(new ApiResponseDTO<List<ReadingMeetupDTO>>(HttpStatus.OK, null , readingMeetup));
     }
 
     @PostMapping
@@ -101,6 +101,15 @@ public class ReadingMeetupController {
         
         readingMeetupService.leaveMeetup(readingMeetupId, user.getId());
         return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, "User removed from meeting"));
+    }
+
+    @PostMapping("/{publicId}/complete")
+    public ResponseEntity<ApiResponseDTO<Void>> completeMeetup(@PathVariable String publicId, Authentication authentication) {
+        Long readingMeetupId = publicIdGenerator.decode(publicId);
+        User user = (User) authentication.getPrincipal();
+        
+        readingMeetupService.completeMeetup(readingMeetupId, user.getId());
+        return ResponseEntity.ok(new ApiResponseDTO<Void>(HttpStatus.OK, "Meetup marked as completed"));
     }
 
     @PatchMapping("/{publicId}/status")
