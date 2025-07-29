@@ -5,7 +5,7 @@ import com.escribasmostachos.Escribasmostachos.model.UserBookRead;
 import com.escribasmostachos.Escribasmostachos.model.UserMeetupParticipation;
 import com.escribasmostachos.Escribasmostachos.dto.meetups.CreateMeetupDTO;
 import com.escribasmostachos.Escribasmostachos.dto.meetups.ReadingMeetupDTO;
-import com.escribasmostachos.Escribasmostachos.exception.BusinessConflictException;
+import com.escribasmostachos.Escribasmostachos.exception.BusinessLogicalException;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceAlreadyExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.exception.ResourceDontExistsOnDatabaseException;
 import com.escribasmostachos.Escribasmostachos.exception.UnauthorizedUserActionException;
@@ -17,12 +17,13 @@ import com.escribasmostachos.Escribasmostachos.service.mapper.ReadingMeetupMappe
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.PageRequest;
@@ -57,14 +58,13 @@ public class ReadingMeetupService {
 
     @Transactional
     public ReadingMeetupDTO createMeetup(Long creatorId, CreateMeetupDTO createMeetupDTO) {
-        User creator = userService.getUserById(creatorId);
+        log.debug("Creating meetup");
         Book book = bookService.getBookById(createMeetupDTO.getBookId());
-        
-        Optional<ReadingMeetup> existingMeetup = meetupRepository.findByCreatorIdAndBookIdAndStatus(creator.getId(), book.getId(), MeetupStatus.DRAFT);
-        if(existingMeetup.isPresent()){
+
+        if (meetupRepository.existsByCreatorIdAndBookIdAndStatus(creatorId, book.getId(), MeetupStatus.DRAFT)) {
             throw new ResourceAlreadyExistsOnDatabaseException("You already have a draft of a meetup to read that book");
         }
-
+        User creator = new User(creatorId);
         ReadingMeetup newMeetup = new ReadingMeetup(createMeetupDTO.getTitle(), creator, book);
         meetupRepository.save(newMeetup);
         meetupParticipationService.addParticipant(newMeetup, creator);
@@ -72,85 +72,79 @@ public class ReadingMeetupService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReadingMeetupDTO> getMeetups(Long userId, int limit, int page, MeetupStatus status,  String usernameToFilter) {
-        PageRequest pageable = PageRequest.of(page, limit);
-        Page<ReadingMeetup> readingMeetups;
+    public List<ReadingMeetupDTO> getMeetups(MeetupStatus status, Long creatorId, String usernameToFilter, int limit, int page) {
+        log.debug("Getting meetups");
+        Pageable pageable = PageRequest.of(page, limit);
 
-        Long userIdToFind = null;
-        if(userId != null){
-            userIdToFind = userId;
-        }else if(usernameToFilter != null){
-            userIdToFind = userService.loadUserByUsername(usernameToFilter).getId();
+        if (creatorId == null && usernameToFilter != null) {
+            creatorId = userService.findIdByUsername(usernameToFilter);
+            if (creatorId == null) {
+                return Collections.emptyList();
+            }
         }
 
-        if (status != null && userIdToFind != null) {
-            log.debug("Getting reading meetups with status: "+ status + " created by user " + userIdToFind);
-            readingMeetups = meetupRepository.findAllByStatusAndCreatorId(status, userIdToFind, pageable);
-        } else if (userIdToFind != null) {
-            log.debug("Getting all type of meetups created by user: " + userIdToFind);
-            readingMeetups = meetupRepository.findAllByCreatorId(userIdToFind, pageable);
-        } else if (status != null) {
-            log.debug("Getting reading meetups with status: "+ status);
-            readingMeetups = meetupRepository.findAllByStatus(status, pageable);
-        } else {
-            log.debug("Getting all type of meetups");
-            readingMeetups = meetupRepository.findAll(pageable);
-        }
+        Page<ReadingMeetup> readingMeetupPage = meetupRepository.findWithDetails(status, creatorId, pageable);
 
-        return readingMeetups.getContent().stream()
-                    .map(meetupMapper::toReadingMeetupDTO)
-                    .collect(Collectors.toList());
+        return readingMeetupPage.stream()
+            .map(meetup -> meetupMapper.toReadingMeetupDTO(meetup))
+            .collect(Collectors.toList());
     }
 
     @Transactional
     public void joinToMeetup(Long readingMeetupId, Long userId) {
+        log.debug("Joining meetup");
         ReadingMeetup readingMeetupToJoin = findReadingMeetupById(readingMeetupId);
         if (!readingMeetupToJoin.getStatus().equals(MeetupStatus.DRAFT)) {
-            throw new BusinessConflictException("You can't join a meetup that is not in DRAFT status");
+            throw new BusinessLogicalException("You can't join a meetup that is not in DRAFT status");
         }
 
-        boolean alreadyJoined = readingMeetupToJoin.getParticipants().stream()
-            .anyMatch(participant -> participant.getUser().getId().equals(userId));
+        boolean alreadyJoined = meetupParticipationService.existsByMeetupIdAndUserId(readingMeetupId, userId);
 
         if (alreadyJoined) {
             throw new ResourceAlreadyExistsOnDatabaseException("User is already in the meetup");
         }
 
-        User newParticipant = userService.getUserById(userId);
+        User newParticipant = new User(userId);
         meetupParticipationService.addParticipant(readingMeetupToJoin, newParticipant);
     }
 
     @Transactional
     public void leaveMeetup(Long readingMeetupId, Long userId) {
+        log.debug("Leaving meetup");
         ReadingMeetup meetupToLeave = findReadingMeetupById(readingMeetupId);
 
-        Optional<UserMeetupParticipation> participationOpt = meetupToLeave.getParticipants().stream()
-            .filter(p -> p.getUser().getId().equals(userId))
-            .findFirst();
-        if (participationOpt.isEmpty()) {
-            throw new ResourceDontExistsOnDatabaseException("User not registered in that meetup");
+        if (meetupToLeave.getStatus().equals(MeetupStatus.COMPLETED) || meetupToLeave.getStatus().equals(MeetupStatus.CANCELLED)){
+            throw new BusinessLogicalException("Yoy can only leave 'DRAFT' and 'ACTIVE' meetups");
         }
+        UserMeetupParticipation participationOpt = meetupParticipationService
+            .findByMeetupIdAndUserId(readingMeetupId, userId);
 
-        User userToRemove = userService.getUserById(userId);
-        meetupParticipationService.removeParticipant(meetupToLeave, userToRemove);
+        meetupParticipationService.removeParticipant(participationOpt);
     }
 
+    @Transactional
     public void completeMeetup(Long readingMeetupId, Long userId) {
-        ReadingMeetup readingMeetupToComplete = findReadingMeetupById(readingMeetupId);
-        User userToAdd = userService.getUserById(userId);
-        
-        meetupParticipationService.markAsCompleted(readingMeetupToComplete, userToAdd);
+        log.debug("Marking meetup as completed");
+
+        ReadingMeetup meetupToComplete = findReadingMeetupById(readingMeetupId);
+
+        if (!meetupToComplete.getStatus().equals(MeetupStatus.ACTIVE)){
+            throw new BusinessLogicalException("Yoy can only complete 'ACTIVE' meetups");
+        }
+        meetupParticipationService.markAsCompleted(readingMeetupId, userId);
     }
 
     @Transactional
     public void deleteMeetup(Long readingMeetupId, Long userId) {
+        log.debug("Deleting meetup");
         ReadingMeetup readingMeetupToDelete = findReadingMeetupById(readingMeetupId);
         meetupRepository.deleteById(readingMeetupToDelete.getId());
     }
 
     @Transactional
     public ReadingMeetupDTO changeMeetupStatus(Long readingMeetupId, Long userId, MeetupStatus status) {
-        ReadingMeetup readingMeetupToUpdate = findReadingMeetupById(readingMeetupId);
+        log.debug("Changing meetup status");
+        ReadingMeetup readingMeetupToUpdate = findByIdWithDetails(readingMeetupId);
 
         if(readingMeetupToUpdate.getCreator().getId() != userId){
             throw new UnauthorizedUserActionException("You can only update status from your own meetups");
@@ -160,26 +154,55 @@ public class ReadingMeetupService {
             throw new UnauthorizedUserActionException("You can't update meetups canceled");
         }
 
-        if(!currentMeetupStatus.equals(status)){
-            if(status.equals(MeetupStatus.COMPLETED)){
-                if (!currentMeetupStatus.equals(MeetupStatus.ACTIVE)){
-                    throw new BusinessConflictException("You can't update meetups to 'COMPLETED' if they weren't in 'ACTIVE' status");
-                }
-                processCompletion(readingMeetupToUpdate);
-            }else if(status.equals(MeetupStatus.ACTIVE)){
-                processActivation(readingMeetupToUpdate);
-            }else if (status.equals(MeetupStatus.CANCELLED)) {
-                processCancellation(readingMeetupToUpdate);
-            }else if (status.equals(MeetupStatus.DRAFT)){
-                processBackToDraft(readingMeetupToUpdate);
+        if (!currentMeetupStatus.equals(status)) {
+            log.debug("Updating meetup with status: " + status);
+            switch (status) {
+                case COMPLETED:
+                    if (!currentMeetupStatus.equals(MeetupStatus.ACTIVE)) {
+                        throw new BusinessLogicalException("You can't update meetups to 'COMPLETED' if they weren't in 'ACTIVE' status");
+                    }
+                    processCompletion(readingMeetupToUpdate);
+                    break;
+                case ACTIVE:
+                    processActivation(readingMeetupToUpdate);
+                    break;
+                case CANCELLED:
+                    processCancellation(readingMeetupToUpdate);
+                    break;
+                case DRAFT:
+                    processBackToDraft(readingMeetupToUpdate);
+                    break;
             }
             readingMeetupToUpdate.setStatus(status);
         }
 
-
         return meetupMapper.toReadingMeetupDTO(readingMeetupToUpdate);
     }
 
+    /**
+     * Processes the completion of a reading meetup.
+     * 
+     * <p>This operation performs the following steps:
+     * <ul>
+     *   <li>Retrieves the book associated with the meetup.</li>
+     *   <li>Collects all users participating in the meetup.</li>
+     *   <li>Fetches existing readings of the book by those users.</li>
+     *   <li>Updates the books read count for users who have completed the meetup but do not
+     *       yet have a recorded reading of the book.</li>
+     *   <li>Creates and saves new {@code UserBookRead} entities for users who completed the meetup
+     *       and did not have previous reading records.</li>
+     *   <li>Sets the meetup end date to the current date.</li>
+     *   <li>Saves the updated users and new reading records to the database.</li>
+     * </ul>
+     * 
+     * <p><b>Important:</b> This method should be called within a transactional context as it performs
+     * multiple database write operations that need to be atomic.
+     * <br>It is recommended that the public method invoking this one is annotated with {@code @Transactional}.
+     * 
+     * <p>This business operation is infrequent and only occurs when a reading event (meetup) is completed.
+     * 
+     * @param meetup the reading meetup to process
+     */
     private void processCompletion(ReadingMeetup meetup) {
         Book book = meetup.getBook();
         Set<User> participants = meetup.getParticipants().stream()
@@ -219,13 +242,8 @@ public class ReadingMeetupService {
 
     private void processCancellation(ReadingMeetup meetup) {
         meetup.setMeetupEndDate(LocalDate.now());
-
+        meetupParticipationService.removeAllByMeetupId(meetup.getId());
         meetupRepository.save(meetup);
-        userService.saveAll(
-            meetup.getParticipants().stream()
-                .map(UserMeetupParticipation::getUser)
-                .collect(Collectors.toSet())
-        );
     }
 
     private void processBackToDraft(ReadingMeetup meetup) {
@@ -235,5 +253,9 @@ public class ReadingMeetupService {
 
     public ReadingMeetup findReadingMeetupById(Long readingMeetupId){
         return meetupRepository.findById(readingMeetupId).orElseThrow(() ->new ResourceDontExistsOnDatabaseException("No meeting found")); 
+    }
+
+    public ReadingMeetup findByIdWithDetails(Long readingMeetupId){
+        return meetupRepository.findByIdWithDetails(readingMeetupId).orElseThrow(() ->new ResourceDontExistsOnDatabaseException("No meeting found")); 
     }
 }

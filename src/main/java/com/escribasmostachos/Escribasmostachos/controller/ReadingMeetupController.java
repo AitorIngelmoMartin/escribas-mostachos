@@ -72,7 +72,7 @@ public class ReadingMeetupController {
             usernameToFilter = creatorUsername;
         }
 
-        List<ReadingMeetupDTO> readingMeetup = readingMeetupService.getMeetups(userId, limit, page, status, usernameToFilter);
+        List<ReadingMeetupDTO> readingMeetup = readingMeetupService.getMeetups(status, userId, usernameToFilter, limit, page);
         return ResponseEntity.ok(new ApiResponseDTO<List<ReadingMeetupDTO>>(HttpStatus.OK, null , readingMeetup));
     }
 
@@ -81,7 +81,8 @@ public class ReadingMeetupController {
         User user = (User) authentication.getPrincipal();
 
         ReadingMeetupDTO readingMeetup = readingMeetupService.createMeetup(user.getId(), createMeetupDTO);
-        return ResponseEntity.ok(new ApiResponseDTO<ReadingMeetupDTO>(HttpStatus.CREATED, "Reading meetup draft created successfully", readingMeetup));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                             .body(new ApiResponseDTO<>(HttpStatus.CREATED, "Reading meetup draft created successfully", readingMeetup));
     }
 
     @PostMapping("/{publicId}/join")
@@ -121,7 +122,7 @@ public class ReadingMeetupController {
         User user = (User) authentication.getPrincipal();
         
         ReadingMeetupDTO updatedReadingMeetup = readingMeetupService.changeMeetupStatus(readingMeetupId, user.getId(), UpdateMeetupStatusDTO.getStatus());
-        return ResponseEntity.ok(new ApiResponseDTO<ReadingMeetupDTO>(HttpStatus.OK, "update successfully", updatedReadingMeetup));
+        return ResponseEntity.ok(new ApiResponseDTO<ReadingMeetupDTO>(HttpStatus.OK, "successfully updated", updatedReadingMeetup));
     }
 
     @DeleteMapping("/{publicId}/delete")

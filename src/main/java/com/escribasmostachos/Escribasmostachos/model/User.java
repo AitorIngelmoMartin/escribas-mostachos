@@ -160,4 +160,8 @@ public class User implements UserDetails {
             this.profileIsPrivate = dto.getProfileIsPrivate();
         }
     }
+
+    public User(Long userId) {
+        this.id = userId;
+    }
 }
